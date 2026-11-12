@@ -21,26 +21,34 @@ import {
   makeGithubJob,
 } from "./createGithubJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { withEnsureImages } from "./ensureImageJobs";
 import { makeAggregateCheckJob } from "./aggregateCheckJob";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import {
   getGithubCreateReleaseWorkflow,
   getGithubReleaseCheckJobs,
+  getGithubReleaseImageJobNames,
   getGithubReleaseJobs,
   getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
-import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
+import {
+  getReviewAppsConfig,
+  isReviewDeliveryJob,
+  isReviewDeployGated,
+} from "../../reviewApps";
 import {
   getGatedReviewDeliveryJobIds,
   getInRunDeployCondition,
   makeReviewAppAggregateJob,
+  makeReviewDeployMarkerJob,
+  REVIEW_DEPLOY_MARKER_JOB_ID,
   makeReviewDeployTriggerJob,
   makeReviewDeployWorkflow,
   REVIEW_DEPLOY_WORKFLOW_FILE,
   withDraftsSkipped,
   withInRunCondition,
+  withReviewStopGuard,
   withReviewStopSwitch,
 } from "./reviewDeployWorkflow";
 
@@ -254,12 +262,37 @@ export class GithubBackend implements PipelineBackend {
             for (const id of deliveryIds) {
               const entry = triggerJobs.get(id)!;
               entry.githubJob = withInRunCondition(
-                entry.githubJob,
+                {
+                  ...entry.githubJob,
+                  // a deploy never starts unmarked
+                  needs: [
+                    REVIEW_DEPLOY_MARKER_JOB_ID,
+                    ...(entry.githubJob.needs ?? []),
+                  ],
+                },
                 inRunCondition,
               );
             }
           } else {
             deliveryIds.forEach((id) => triggerJobs.delete(id));
+          }
+        }
+      }
+
+      // review apps that deploy on every PR (no gate) deploy in the
+      // review run unconditionally: they set the marker as well
+      let ungatedMarked = false;
+      if (trigger === "mr" && !isReviewDeployGated(reviewApps)) {
+        for (const entry of triggerJobs.values()) {
+          if (isReviewDeliveryJob(entry.context, entry.job)) {
+            ungatedMarked = true;
+            entry.githubJob = {
+              ...entry.githubJob,
+              needs: [
+                REVIEW_DEPLOY_MARKER_JOB_ID,
+                ...(entry.githubJob.needs ?? []),
+              ],
+            };
           }
         }
       }
@@ -379,7 +412,28 @@ export class GithubBackend implements PipelineBackend {
       }
 
       if (Object.keys(jobs).length > 0) {
-        const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
+        const markerJobs: Record<string, GithubJob> =
+          trigger === "mr" &&
+          ((inRunCondition && inRunDeliveryIds.length > 0) || ungatedMarked)
+            ? {
+                [REVIEW_DEPLOY_MARKER_JOB_ID]: makeReviewDeployMarkerJob(
+                  ungatedMarked ? undefined : inRunCondition,
+                ),
+              }
+            : {};
+        // one bundled image job, only where a job runs in a custom image
+        // (the main workflow also ensures the release image, which the
+        // create-release and release-on-green workflows rely on)
+        const workflowJobs = {
+          ...withEnsureImages(
+            images,
+            jobs,
+            trigger === "mainBranch"
+              ? getGithubReleaseImageJobNames(config, images)
+              : [],
+          ),
+          ...markerJobs,
+        };
         const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
           ...workflowPermissions(images),
@@ -395,11 +449,15 @@ export class GithubBackend implements PipelineBackend {
             trigger === "mr"
               ? {
                   ...workflowJobs,
-                  ...makeAggregateCheckJob(workflowJobs, inRunDeliveryIds),
+                  ...makeAggregateCheckJob(workflowJobs, [
+                    ...inRunDeliveryIds,
+                    // skipped on purpose with the chains it gates
+                    ...(ungatedMarked ? [] : Object.keys(markerJobs)),
+                  ]),
                   // the stable review app result of an in-run deploy
                   ...(inRunCondition && inRunDeliveryIds.length > 0
                     ? makeReviewAppAggregateJob(
-                        inRunDeliveryIds,
+                        [...inRunDeliveryIds, REVIEW_DEPLOY_MARKER_JOB_ID],
                         inRunCondition,
                       )
                     : {}),
@@ -446,18 +504,19 @@ export class GithubBackend implements PipelineBackend {
           // number from — fall back to the input
           CL_PR_NUMBER: "${{ github.event.number || inputs.pr }}",
         },
-        jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
+        jobs: withEnsureImages(images, reviewStopJobs),
       };
+      const guardedStopWorkflow = withReviewStopGuard(reviewStopWorkflow);
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
       ]
         ? withReviewStopSwitch(
-            reviewStopWorkflow,
+            guardedStopWorkflow,
             reviewApps,
             isReviewDeployGated(reviewApps) &&
               getInRunDeployCondition(reviewApps) !== undefined,
           )
-        : reviewStopWorkflow;
+        : guardedStopWorkflow;
     }
 
     for (const [kind, bucket] of Object.entries(manualKindBuckets) as Array<
@@ -496,9 +555,9 @@ export class GithubBackend implements PipelineBackend {
         },
         ...workflowPermissions(images),
         env: workflowEnv,
-        jobs: {
-          ...makeEnsureImageGithubJobs(images),
-          ...Object.fromEntries(
+        jobs: withEnsureImages(
+          images,
+          Object.fromEntries(
             Object.entries(bucket.jobs).map(([id, job]) => [
               id,
               singleTask
@@ -506,7 +565,7 @@ export class GithubBackend implements PipelineBackend {
                 : { ...job, if: `\${{ ${bucket.conditions[id]} }}` },
             ]),
           ),
-        },
+        ),
       };
     }
 

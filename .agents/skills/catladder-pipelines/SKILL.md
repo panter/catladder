@@ -44,7 +44,8 @@ stop`, `↩️ catladder rollback` — when all of a kind's tasks target one
   env the name carries it (e.g. `▶️ catladder deploy prod`); otherwise
   pick the task from the workflow's dropdown. Review apps are stopped
   automatically when their pull request closes (`🛑 catladder stop
-review app`); the same workflow can be dispatched with a PR number to
+review app`) — a PR that never deployed skips the stop jobs (see the
+  review-app section below); the same workflow can be dispatched with a PR number to
   tear one down while the pull request is still open (gitlab runs these as manual jobs inside the pipeline
   instead).
 
@@ -129,7 +130,16 @@ through the `▶️ catladder deploy review` workflow
   switching it off stops the review apps (`🛑 catladder stop review
 app`), and so does closing the PR — the stop first waits for a
   review run of the PR that may still be deploying (on close it
-  cancels it), so a late deploy can't outlive the teardown;
+  cancels it), so a late deploy can't outlive the teardown. Closing a
+  PR that never attempted a review deploy skips the stop jobs (and
+  the image jobs that only serve them): a guard job decides from the
+  `catladder:review-deployed` marker label, which the deploy sets
+  before it creates any resource. Don't remove that label by hand —
+  the PR would no longer be torn down on close. If the guard can't
+  tell, it fails open and stops anyway; PRs deployed before the
+  marker existed (a `catladder review app` status or a
+  `catladder-deploy-review.yml` run) are still stopped; a manual `workflow_dispatch` stop
+  always runs;
 - on request, any time (agents included):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
   — explicit requests always deploy, but need the PR open and its CI
@@ -197,7 +207,9 @@ closed (pinning does not apply there).
 ## Job images and catci
 
 Jobs run in catladder-provided images (`🐳 catladder image <name>` build
-jobs). Their definitions are materialized into
+jobs; on GitHub Actions a single `🐳 catladder images` job per workflow
+checks/builds all images, and only in workflows where an image is used,
+while GitLab keeps one job per image). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
 under `catladder/` (content-hashed, rebuilt only on change). Each image
 dir carries an `IMAGE_TAG` file with the current tag, so a tag change
@@ -256,6 +268,15 @@ the pnpm store, and as copied directories they fail at runtime with
 `ERR_MODULE_NOT_FOUND`. If a deployed app shows that error, check that
 the committed workflows contain the archive steps and regenerate if
 they don't.
+
+Hand-off artifacts (the build job's output) are uploaded with
+`retention-days: 3`; report and project-configured artifacts keep the
+repository default. Set `pipelines.github.artifactRetentionDays`
+(integer 1-90) in catladder.ts to change it; when set it applies to
+all uploads. It affects new uploads only — existing artifacts are not
+cleaned up. Re-running a single job after its upstream artifacts
+expired fails at "Download artifacts"; re-run the whole workflow
+instead. GitLab output is unchanged.
 
 ## Caching
 

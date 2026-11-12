@@ -15,13 +15,13 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
+    catladder-images:
+      name: 🐳 catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
+        - name: 🐳 catladder images
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -49,21 +49,16 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             function collapseable_section_end () {
             echo "::endgroup::"
             }
-            collapseable_section_start "docker-login" "Docker Login"
+            set -e
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image semantic-release"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+              docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
+            echo "::endgroup::"
           shell: bash
     create-release:
       name: create release
@@ -78,7 +73,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
         actions: write
         packages: read
       needs:
-        - catladder-image-semantic-release
+        - catladder-images
       env:
         GITHUB_TOKEN: \${{ github.token }}
         CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
@@ -158,13 +153,13 @@ catladder-main.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
+    catladder-images:
+      name: 🐳 catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
+        - name: 🐳 catladder images
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -192,127 +187,38 @@ catladder-main.yml:
             function collapseable_section_end () {
             echo "::endgroup::"
             }
-            collapseable_section_start "docker-login" "Docker Login"
+            set -e
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image jobs-default"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+              docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image docker-build"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+              docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image semantic-release"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+              docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
+            echo "::endgroup::"
           shell: bash
     db1-audit-dev:
       name: db1 🛡 audit | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -336,7 +242,7 @@ catladder-main.yml:
       name: db1 👮 lint | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -375,7 +281,7 @@ catladder-main.yml:
       name: db1 🧪 test | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -414,7 +320,7 @@ catladder-main.yml:
       name: db1 🔨 app | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -475,7 +381,7 @@ catladder-main.yml:
       name: db1 🔨 docker | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db1-app-dev
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -540,7 +446,7 @@ catladder-main.yml:
       name: db2 🛡 audit | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -564,7 +470,7 @@ catladder-main.yml:
       name: db2 👮 lint | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -603,7 +509,7 @@ catladder-main.yml:
       name: db2 🧪 test | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -642,7 +548,7 @@ catladder-main.yml:
       name: db2 🔨 app | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -703,7 +609,7 @@ catladder-main.yml:
       name: db2 🔨 docker | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db2-app-dev
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -768,7 +674,7 @@ catladder-main.yml:
       name: api 🛡 audit | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -792,7 +698,7 @@ catladder-main.yml:
       name: api 👮 lint | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -831,7 +737,7 @@ catladder-main.yml:
       name: api 🧪 test | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -870,7 +776,7 @@ catladder-main.yml:
       name: api 🔨 app | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -933,7 +839,7 @@ catladder-main.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-dev
-        - catladder-image-docker-build
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
         credentials:
@@ -1010,13 +916,13 @@ catladder-review.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
+    catladder-images:
+      name: 🐳 catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
+        - name: 🐳 catladder images
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1044,127 +950,30 @@ catladder-review.yml:
             function collapseable_section_end () {
             echo "::endgroup::"
             }
-            collapseable_section_start "docker-login" "Docker Login"
+            set -e
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image jobs-default"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+              docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image docker-build"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+              docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
           shell: bash
     db1-audit-review:
       name: db1 🛡 audit | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1188,7 +997,7 @@ catladder-review.yml:
       name: db1 👮 lint | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1227,7 +1036,7 @@ catladder-review.yml:
       name: db1 🧪 test | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1266,7 +1075,7 @@ catladder-review.yml:
       name: db1 🔨 app | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1327,7 +1136,8 @@ catladder-review.yml:
       name: db1 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-review-deploy-marker
+        - catladder-images
         - db1-app-review
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -1367,6 +1177,7 @@ catladder-review.yml:
       name: db1 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - db1-app-review
         - db1-audit-review
         - db1-docker-review
@@ -1392,7 +1203,7 @@ catladder-review.yml:
       name: db2 🛡 audit | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1416,7 +1227,7 @@ catladder-review.yml:
       name: db2 👮 lint | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1455,7 +1266,7 @@ catladder-review.yml:
       name: db2 🧪 test | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1494,7 +1305,7 @@ catladder-review.yml:
       name: db2 🔨 app | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1555,7 +1366,8 @@ catladder-review.yml:
       name: db2 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-review-deploy-marker
+        - catladder-images
         - db2-app-review
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -1595,6 +1407,7 @@ catladder-review.yml:
       name: db2 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - db2-app-review
         - db2-audit-review
         - db2-docker-review
@@ -1620,7 +1433,7 @@ catladder-review.yml:
       name: api 🛡 audit | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1644,7 +1457,7 @@ catladder-review.yml:
       name: api 👮 lint | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1683,7 +1496,7 @@ catladder-review.yml:
       name: api 🧪 test | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1722,7 +1535,7 @@ catladder-review.yml:
       name: api 🔨 app | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -1784,8 +1597,9 @@ catladder-review.yml:
       name: api 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - api-app-review
-        - catladder-image-docker-build
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
         credentials:
@@ -1824,6 +1638,7 @@ catladder-review.yml:
       name: api 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - api-app-review
         - api-audit-review
         - api-docker-review
@@ -1846,6 +1661,17 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-deploy-review.sh
           shell: bash
+    catladder-review-deploy-marker:
+      name: 🏷️ mark review deploy
+      runs-on: ubuntu-latest
+      permissions:
+        pull-requests: write
+      env:
+        GH_TOKEN: \${{ github.token }}
+      steps:
+        - name: mark review deploy
+          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
+          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
@@ -1856,9 +1682,8 @@ catladder-review.yml:
         - api-docker-review
         - api-lint-review
         - api-test-review
-        - catladder-image-docker-build
-        - catladder-image-jobs-default
-        - catladder-image-semantic-release
+        - catladder-images
+        - catladder-review-deploy-marker
         - db1-app-review
         - db1-audit-review
         - db1-deploy-review
@@ -1896,13 +1721,13 @@ catladder-release.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
+    catladder-images:
+      name: 🐳 catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
+        - name: 🐳 catladder images
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1930,127 +1755,30 @@ catladder-release.yml:
             function collapseable_section_end () {
             echo "::endgroup::"
             }
-            collapseable_section_start "docker-login" "Docker Login"
+            set -e
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image jobs-default"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+              docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image docker-build"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+              docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
           shell: bash
     db1-app-stage:
       name: db1 🔨 app | stage
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -2111,7 +1839,7 @@ catladder-release.yml:
       name: db1 🔨 docker | stage
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db1-app-stage
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -2173,7 +1901,7 @@ catladder-release.yml:
       name: db2 🔨 app | stage
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -2234,7 +1962,7 @@ catladder-release.yml:
       name: db2 🔨 docker | stage
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db2-app-stage
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -2296,7 +2024,7 @@ catladder-release.yml:
       name: api 🔨 app | stage
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -2359,7 +2087,7 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-stage
-        - catladder-image-docker-build
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
         credentials:
@@ -2439,156 +2167,6 @@ catladder-review-stop.yml:
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number || inputs.pr }}
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
-          shell: bash
     db1-stop-review:
       name: db1 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
@@ -2658,6 +2236,9 @@ catladder-review-stop.yml:
             set -e
             set -e
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     db2-stop-review:
       name: db2 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
@@ -2727,6 +2308,9 @@ catladder-review-stop.yml:
             set -e
             set -e
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     api-stop-review:
       name: api 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
@@ -2795,6 +2379,30 @@ catladder-review-stop.yml:
             set -e
             set -e
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
+    catladder-review-stop-guard:
+      name: 🚦 review stop guard
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        pull-requests: read
+        statuses: read
+        actions: read
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        stop: \${{ steps.main.outputs.stop }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            sparse-checkout: .catladder-generated/catci
+        - name: 🚦 review stop guard
+          id: main
+          run: node .catladder-generated/catci/index.js review-app github-stop-guard
+          shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod
   on:
@@ -2813,13 +2421,13 @@ catladder-deploy.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
+    catladder-images:
+      name: 🐳 catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
+        - name: 🐳 catladder images
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -2847,127 +2455,30 @@ catladder-deploy.yml:
             function collapseable_section_end () {
             echo "::endgroup::"
             }
-            collapseable_section_start "docker-login" "Docker Login"
+            set -e
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image jobs-default"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+              docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
+            echo "::group::🐳 catladder image docker-build"
             if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
               echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+              docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
             echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
           shell: bash
     db1-app-prod:
       name: db1 🔨 app | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -3029,7 +2540,7 @@ catladder-deploy.yml:
       name: db1 🔨 docker | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db1-app-prod
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -3093,7 +2604,7 @@ catladder-deploy.yml:
       name: db2 🔨 app | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -3155,7 +2666,7 @@ catladder-deploy.yml:
       name: db2 🔨 docker | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-docker-build
+        - catladder-images
         - db2-app-prod
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -3219,7 +2730,7 @@ catladder-deploy.yml:
       name: api 🔨 app | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:
@@ -3283,7 +2794,7 @@ catladder-deploy.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-prod
-        - catladder-image-docker-build
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
         credentials:
@@ -3367,156 +2878,6 @@ catladder-stop.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image jobs-default
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-docker-build:
-      name: 🐳 catladder image docker-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image docker-build
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
-            collapseable_section_end "docker-push"
-          shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 catladder image semantic-release
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
-            collapseable_section_end "docker-push"
-          shell: bash
     db1-stop-dev:
       name: db1 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
