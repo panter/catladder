@@ -6,12 +6,9 @@
  * Fail open: whenever it is unclear whether a deploy happened, stop.
  */
 
-/**
- * the PR label the deploy side sets before it creates any resource.
- * Keep in sync with the marker job in
- * packages/pipeline/src/backends/github/reviewDeployWorkflow.ts.
- */
-export const REVIEW_DEPLOYED_MARKER_LABEL = "catladder:review-deployed";
+import { REVIEW_DEPLOYED_LABEL } from "../../../../packages/pipeline/src/backends/github/reviewDeployWorkflow";
+
+export { REVIEW_DEPLOYED_LABEL as REVIEW_DEPLOYED_MARKER_LABEL };
 
 export type StopDecision = { stop: boolean; reason: string };
 
@@ -41,7 +38,7 @@ export const decideReviewStop = ({
       reason: "could not read the PR labels, assuming a deploy happened",
     };
   }
-  if (labels.includes(REVIEW_DEPLOYED_MARKER_LABEL)) {
+  if (labels.includes(REVIEW_DEPLOYED_LABEL)) {
     return { stop: true, reason: "the PR has deployed review apps" };
   }
   if (priorDeployEvidence === undefined) {

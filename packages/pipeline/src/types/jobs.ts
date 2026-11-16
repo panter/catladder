@@ -238,6 +238,13 @@ export type GitlabJobFields = {
   allow_failure?: boolean;
 
   /**
+   * maximum run time as a duration with units (`"10m"`, `"1h 30m"`).
+   * gitlab: emitted as `timeout`; github: converted to `timeout-minutes`
+   * (whole minutes, rounded up, minimum 1).
+   */
+  timeout?: string;
+
+  /**
    * gitlab pages publishing for this job (lowered only by the gitlab
    * backend); `path_prefix` enables parallel deployments (e.g. MR
    * previews)

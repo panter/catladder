@@ -97,4 +97,38 @@ describe("createCustomTestJobs", () => {
     expect(lintJob?.allow_failure).toBeUndefined();
     expect(testJob?.allow_failure).toBeUndefined();
   });
+
+  it("passes timeout through to audit, lint and test jobs", () => {
+    const context = {
+      ...baseContext,
+      build: {
+        ...baseContext.build,
+        config: {
+          ...baseContext.build.config,
+          audit: { command: "audit-cmd", timeout: "5m" },
+          lint: { command: "lint-cmd", timeout: "10m" },
+          test: { command: "test-cmd", timeout: "1h 30m" },
+        },
+      },
+    } as ComponentContext<BuildContextStandalone>;
+    const jobs = createCustomTestJobs(context);
+    expect(jobs.find((j) => j.name.includes("audit"))?.timeout).toBe("5m");
+    expect(jobs.find((j) => j.name.includes("lint"))?.timeout).toBe("10m");
+    expect(jobs.find((j) => j.name.includes("test"))?.timeout).toBe("1h 30m");
+  });
+
+  it("leaves timeout undefined when omitted", () => {
+    const context = {
+      ...baseContext,
+      build: {
+        ...baseContext.build,
+        config: {
+          ...baseContext.build.config,
+          lint: { command: "lint-cmd" },
+        },
+      },
+    } as ComponentContext<BuildContextStandalone>;
+    const jobs = createCustomTestJobs(context);
+    expect(jobs.find((j) => j.name.includes("lint"))?.timeout).toBeUndefined();
+  });
 });

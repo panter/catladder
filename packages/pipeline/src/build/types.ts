@@ -122,6 +122,17 @@ export type TestJobCustom = {
    * Defaults to `true` for audit jobs, `undefined` (not set) for lint and test jobs.
    */
   allowFailure?: boolean;
+
+  /**
+   * maximum run time of the job, as a duration with units, e.g. `"10m"`,
+   * `"1h 30m"` or `"90 minutes"` (units: s, m, h, d, w).
+   *
+   * GitLab: passed through as `timeout`. GitHub: converted to
+   * `timeout-minutes`, rounded up to whole minutes (minimum 1).
+   * When omitted, the platform default applies. An invalid value
+   * (including bare numbers like `"600"`) fails pipeline generation.
+   */
+  timeout?: string;
 };
 
 /**

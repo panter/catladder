@@ -15,15 +15,20 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   status                        what is going on: in progress, waiting for a human, ready, closed in the last 24 h
   whoami | rigs                 who the token belongs to | reachable cities and rigs
   help                          allowed read commands and flags
-  reads, bd syntax, JSON out:   list | search <q> | show <id>... | ready | blocked | count | dep tree <id>
+  reads, bd syntax, JSON out:   list | search <q> | show <id>... | ready | blocked | count | dep tree <id> | dep list <id>
   sql "<SELECT ...>"            one read-only statement (tables: issues, labels, comments, dependencies, events)
   create <title> [--type T] [--priority N] [--label L]... [--parent ID]
          [--description D | --description-file F] [--acceptance A | --acceptance-file F] [--design D | --design-file F]
+  mail <subject> <text>         urgent attention only, work goes into beads (create); text "-" reads stdin
   comment <id> <text>           text "-" reads stdin
   label add <id> <label>        never approved / triage-checked (use approve)
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
+  decision-feedback <id> (--option <key>|--text <text>) <quote...>   ONLY on the person's explicit words
+  plan-feedback <id> <gate> <answer> <quote...>   ONLY on the person's explicit words; quote = their exact words
   update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
-  label remove <id> <label> | dep add <id> --blocked-by <id> | dep remove <id> <id>
+  label remove <id> <label>
+  dep add <later> --blocked-by <earlier> [--type blocks|discovered-from|related]   same rig, work beads only
+  dep remove <later> <earlier>
   Files: "-" means stdin.`;
 const here = dirname(fileURLToPath(import.meta.url));
 const config = (() => { const file = join(here, "..", "config.json"); try { return existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {}; } catch { return {}; } })();
@@ -62,7 +67,7 @@ async function call(method, path, body) {
   const text = await response.text();
   let value; try { value = JSON.parse(text); } catch { die(`HTTP ${response.status}: non-JSON response (is the URL right?)`, 1); }
   if (response.status === 401 && !process.env.CITY_BD_TOKEN) notSignedIn("the login expired or was revoked");
-  if (!response.ok) die(`HTTP ${response.status}: ${value.error ?? "request failed"}${response.headers.has("retry-after") ? `; retry after ${response.headers.get("retry-after")} seconds` : ""}`, 1);
+  if (!response.ok) die(`HTTP ${response.status}: ${value.error ?? "request failed"}${value.details !== undefined ? `; details: ${JSON.stringify(value.details)}` : ""}${response.headers.has("retry-after") ? `; retry after ${response.headers.get("retry-after")} seconds` : ""}`, 1);
   return value;
 }
 // OAuth 2.1 + PKCE against the dashboard, the same flow MCP clients use; the token lands in ~/.config/city-bd/token.
@@ -127,9 +132,14 @@ if (command === "status") {
   process.exit(0);
 }
 if (command === "sql") print((await call("POST", `${rig}/sql`, { query: rest.join(" ") })).rows);
-else if (command === "comment") {
+else if (command === "mail") {
+  if (rest.length !== 2) die('mail <subject> <text> (text "-" reads stdin)');
+  print(await call("POST", `${rig}/mail`, { subject: rest[0], text: rest[1] === "-" ? readText("-") : rest[1] }));
+} else if (command === "comment") {
   if (rest.length < 2) die("comment <id> <text>");
-  print((await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") })).result);
+  const response = await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") });
+  print(response.result);
+  if (response.warning) console.error(`Warning: ${response.warning}`);
 } else if (command === "label" && rest[0] === "add") {
   if (rest[0] !== "add" || rest.length !== 3) die("label add <id> <label>");
   print((await call("POST", `${rig}/label`, { id: rest[1], label: rest[2] })).result);
@@ -141,6 +151,13 @@ else if (command === "comment") {
     args.splice(i, 2, `${args[i].replace(/-file$/, "")}=${readText(args[i + 1])}`);
   }
   print((await call("POST", `${rig}/write`, { args })).result);
+} else if (command === "decision-feedback") {
+  if (rest.length < 4 || !["--option", "--text"].includes(rest[1]) || !rest[2]?.trim() || !rest.slice(3).join(" ").trim())
+    die("decision-feedback <id> (--option <key>|--text <text>) <quote: the person's exact words>");
+  print(await call("POST", `${rig}/decision-feedback`, { id: rest[0], [rest[1].slice(2)]: rest[2], quote: rest.slice(3).join(" ") }));
+} else if (command === "plan-feedback") {
+  if (rest.length < 4) die("plan-feedback <id> <gate> <answer> <quote: the person's exact words>");
+  print(await call("POST", `${rig}/plan-feedback`, { id: rest[0], gate: rest[1], answer: rest[2], quote: rest.slice(3).join(" ") }));
 } else if (command === "approve") {
   if (rest.length < 2) die("approve <id> <quote: the person's exact words>");
   print((await call("POST", `${rig}/approve`, { id: rest[0], quote: rest.slice(1).join(" ") })).result);

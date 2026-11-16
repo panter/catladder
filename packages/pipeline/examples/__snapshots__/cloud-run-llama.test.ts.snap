@@ -252,24 +252,10 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/llm-deploy-review.sh
           shell: bash
-      needs:
-        - catladder-review-deploy-marker
-    catladder-review-deploy-marker:
-      name: 🏷️ mark review deploy
-      runs-on: ubuntu-latest
-      permissions:
-        pull-requests: write
-      env:
-        GH_TOKEN: \${{ github.token }}
-      steps:
-        - name: mark review deploy
-          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
-          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-marker
         - llm-deploy-review
       if: always()
       steps:
@@ -389,30 +375,6 @@ catladder-review-stop.yml:
             gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm --quiet --delete-tags
             set -e
             set -e
-          shell: bash
-      needs:
-        - catladder-review-stop-guard
-      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
-    catladder-review-stop-guard:
-      name: 🚦 review stop guard
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-        pull-requests: read
-        statuses: read
-        actions: read
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      outputs:
-        stop: \${{ steps.main.outputs.stop }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            sparse-checkout: .catladder-generated/catci
-        - name: 🚦 review stop guard
-          id: main
-          run: node .catladder-generated/catci/index.js review-app github-stop-guard
           shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod
@@ -657,9 +619,10 @@ export ROOT_URL_INTERNAL="https://pan-my-ai-app-dev-llm-123456789012.europe-west
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-dev-llm"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export HF_TOKEN="$CL_dev_llm_HF_TOKEN"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm"
 export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -697,10 +660,12 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west4
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 HF_TOKEN: |-
   $(printf %s "$CL_dev_llm_HF_TOKEN" | sed '1!s/^/  /')
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -760,9 +725,10 @@ export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export HF_TOKEN="$CL_review_llm_HF_TOKEN"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_llm_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -800,10 +766,12 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west4
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 HF_TOKEN: |-
   $(printf %s "$CL_review_llm_HF_TOKEN" | sed '1!s/^/  /')
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -866,9 +834,10 @@ export ROOT_URL_INTERNAL="https://pan-my-ai-app-stage-llm-123456789012.europe-we
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-stage-llm"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export HF_TOKEN="$CL_stage_llm_HF_TOKEN"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm"
 export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -906,10 +875,12 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west4
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 HF_TOKEN: |-
   $(printf %s "$CL_stage_llm_HF_TOKEN" | sed '1!s/^/  /')
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -969,9 +940,10 @@ export ROOT_URL_INTERNAL="https://pan-my-ai-app-prod-llm-123456789012.europe-wes
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-prod-llm"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export HF_TOKEN="$CL_prod_llm_HF_TOKEN"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm"
 export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -1009,10 +981,12 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west4
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 HF_TOKEN: |-
   $(printf %s "$CL_prod_llm_HF_TOKEN" | sed '1!s/^/  /')
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -1267,9 +1241,10 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-dev-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export HF_TOKEN="$CL_dev_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -1308,10 +1283,12 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west4
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       HF_TOKEN: |-
         $(printf %s "$CL_dev_llm_HF_TOKEN" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1395,9 +1372,10 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export HF_TOKEN="$CL_review_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_llm_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -1436,10 +1414,12 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west4
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       HF_TOKEN: |-
         $(printf %s "$CL_review_llm_HF_TOKEN" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1529,9 +1509,10 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-stage-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export HF_TOKEN="$CL_stage_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -1570,10 +1551,12 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west4
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       HF_TOKEN: |-
         $(printf %s "$CL_stage_llm_HF_TOKEN" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1656,9 +1639,10 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-prod-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export HF_TOKEN="$CL_prod_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -1697,10 +1681,12 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west4
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       HF_TOKEN: |-
         $(printf %s "$CL_prod_llm_HF_TOKEN" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"

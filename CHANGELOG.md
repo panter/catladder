@@ -1,5 +1,29 @@
 # Changelog
 
+## 5.14.0 (2026-11-12)
+
+### Minor Changes
+
+- GitHub Actions workflows now run a single `🐳 catladder images` job that checks and builds all job images, and only where an image is actually used; workflows without an image consumer no longer get image jobs. GitLab pipelines are unchanged.
+
+## 5.13.0 (2026-11-12)
+
+### Minor Changes
+
+- `google-cloudrun` deploys now inject `GOOGLE_CLOUD_PROJECT` (set to the deploy's `projectId`) into every environment's env vars — deployed envs and the `local` env alike. google client libraries and hand-rolled code resolve the GCP project id from the environment without a metadata-server round trip, and projects no longer need their own helper to inject it into local envs. An explicit `vars.public.GOOGLE_CLOUD_PROJECT` still wins.
+
+## 5.12.0 (2026-11-12)
+
+### Minor Changes
+
+- Add an optional `timeout` (e.g. `"10m"`, `"1h 30m"`) to lint/test/audit jobs, `postBuildTests` and `verify`. GitLab emits `timeout`, GitHub emits `timeout-minutes` (rounded up to whole minutes).
+
+## 5.11.0 (2026-11-12)
+
+### Minor Changes
+
+- GitHub Actions: build hand-off artifacts are now uploaded with a 3-day retention instead of the repository default, configurable (and applicable to all uploads) via `pipelines.github.artifactRetentionDays`.
+
 ## 5.10.1 (2026-11-02)
 
 ### Patch Changes

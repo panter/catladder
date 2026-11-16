@@ -210,29 +210,18 @@ describe("github review deploy workflow", () => {
       expect(review.jobs["catladder-ok"].steps[0].run).toContain(` ${MARKER} `);
     });
 
-    it("is set for projects that deploy every PR (auto)", async () => {
-      const workflows = await workflowsOf({
-        ...baseConfig,
-        reviewApps: { deploy: "auto" },
-      });
-      const review = workflows["catladder-review.yml"];
-      expect(workflows["catladder-deploy-review.yml"]).toBeUndefined();
-      // unconditional: every PR deploys
-      expect(review.jobs[MARKER].if).toBeUndefined();
-      expect(review.jobs["catladder-ok"].needs).toContain(MARKER);
-      for (const id of DELIVERY) {
-        expect(review.jobs[id].needs).toContain(MARKER);
-      }
-    });
-
-    it("is set for the default (ungated) review deploys too", async () => {
-      const workflows = await workflowsOf(baseConfig);
-      const review = workflows["catladder-review.yml"];
-      expect(review.jobs[MARKER]).toBeDefined();
-      for (const id of DELIVERY) {
-        expect(review.jobs[id].needs).toContain(MARKER);
-      }
-    });
+    it.each([undefined, { deploy: "auto" }])(
+      "omits marker jobs and dependencies for ungated review deploys (%j)",
+      async (reviewApps) => {
+        const workflows = await workflowsOf({ ...baseConfig, reviewApps });
+        const review = workflows["catladder-review.yml"];
+        expect(workflows["catladder-deploy-review.yml"]).toBeUndefined();
+        expect(review.jobs[MARKER]).toBeUndefined();
+        for (const job of Object.values(review.jobs)) {
+          expect(job.needs ?? []).not.toContain(MARKER);
+        }
+      },
+    );
 
     it("cannot retrigger the review or deploy workflows", async () => {
       const workflows = await workflowsOf({
@@ -273,19 +262,13 @@ describe("github review deploy workflow", () => {
         })
       )["catladder-review-stop.yml"];
 
-    it("gates the stop and image jobs, default config", async () => {
+    it("omits the stop guard for the default ungated deploys", async () => {
       const stop = await stopOf();
-      expectGated(stop.jobs);
-      expect(stop.jobs[GUARD].needs).toBeUndefined();
-      expect(stop.jobs[GUARD].steps.at(-1)?.run).toContain(
-        "review-app github-stop-guard",
-      );
-      expect(stop.jobs[GUARD].outputs).toEqual({
-        stop: "${{ steps.main.outputs.stop }}",
-      });
-      // the guard is upstream of images and stop jobs, never downstream
-      for (const need of stop.jobs[GUARD].needs ?? []) {
-        expect(need).not.toContain("stop-review");
+      expect(stop.jobs[GUARD]).toBeUndefined();
+      expect(stop.jobs["api-stop-review"]).toBeDefined();
+      for (const job of Object.values(stop.jobs)) {
+        expect(job.needs ?? []).not.toContain(GUARD);
+        expect(job.if ?? "").not.toContain("outputs.stop");
       }
     });
 
@@ -299,10 +282,10 @@ describe("github review deploy workflow", () => {
       }
     });
 
-    it("gates the stop jobs without a wait job for auto", async () => {
+    it("omits the stop guard for auto deploys", async () => {
       const stop = await stopOf({ deploy: "auto" });
-      expectGated(stop.jobs);
-      expect(stop.jobs[GUARD].needs).toBeUndefined();
+      expect(stop.jobs[GUARD]).toBeUndefined();
+      expect(stop.jobs["api-stop-review"].needs ?? []).not.toContain(GUARD);
     });
 
     it("runs unconditionally on workflow_dispatch and for label-off events", async () => {

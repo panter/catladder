@@ -20,6 +20,7 @@ export type DeployJobDefinition = Pick<
   | "services"
   | "runnerVariables"
   | "allow_failure"
+  | "timeout"
   | "pages"
   | "idToken"
 > & {

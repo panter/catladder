@@ -79,6 +79,7 @@ export const createVerifyJobs = async (
         ...ensureArray(verifyConfig.command),
       ],
       allow_failure: verifyConfig.allowFailure,
+      timeout: verifyConfig.timeout,
       ...createArtifactsConfig(
         context.build.dir,
         verifyConfig.artifactsReports,

@@ -32,11 +32,7 @@ import {
   getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
-import {
-  getReviewAppsConfig,
-  isReviewDeliveryJob,
-  isReviewDeployGated,
-} from "../../reviewApps";
+import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
 import {
   getGatedReviewDeliveryJobIds,
   getInRunDeployCondition,
@@ -279,24 +275,6 @@ export class GithubBackend implements PipelineBackend {
         }
       }
 
-      // review apps that deploy on every PR (no gate) deploy in the
-      // review run unconditionally: they set the marker as well
-      let ungatedMarked = false;
-      if (trigger === "mr" && !isReviewDeployGated(reviewApps)) {
-        for (const entry of triggerJobs.values()) {
-          if (isReviewDeliveryJob(entry.context, entry.job)) {
-            ungatedMarked = true;
-            entry.githubJob = {
-              ...entry.githubJob,
-              needs: [
-                REVIEW_DEPLOY_MARKER_JOB_ID,
-                ...(entry.githubJob.needs ?? []),
-              ],
-            };
-          }
-        }
-      }
-
       // leaf manual jobs: an explicit manual gate (e.g. a prod deploy) or
       // a stop/rollback task with no automatic trigger. Each becomes a
       // dispatch choice.
@@ -413,12 +391,10 @@ export class GithubBackend implements PipelineBackend {
 
       if (Object.keys(jobs).length > 0) {
         const markerJobs: Record<string, GithubJob> =
-          trigger === "mr" &&
-          ((inRunCondition && inRunDeliveryIds.length > 0) || ungatedMarked)
+          trigger === "mr" && inRunCondition && inRunDeliveryIds.length > 0
             ? {
-                [REVIEW_DEPLOY_MARKER_JOB_ID]: makeReviewDeployMarkerJob(
-                  ungatedMarked ? undefined : inRunCondition,
-                ),
+                [REVIEW_DEPLOY_MARKER_JOB_ID]:
+                  makeReviewDeployMarkerJob(inRunCondition),
               }
             : {};
         // one bundled image job, only where a job runs in a custom image
@@ -452,7 +428,7 @@ export class GithubBackend implements PipelineBackend {
                   ...makeAggregateCheckJob(workflowJobs, [
                     ...inRunDeliveryIds,
                     // skipped on purpose with the chains it gates
-                    ...(ungatedMarked ? [] : Object.keys(markerJobs)),
+                    ...Object.keys(markerJobs),
                   ]),
                   // the stable review app result of an in-run deploy
                   ...(inRunCondition && inRunDeliveryIds.length > 0
@@ -506,7 +482,9 @@ export class GithubBackend implements PipelineBackend {
         },
         jobs: withEnsureImages(images, reviewStopJobs),
       };
-      const guardedStopWorkflow = withReviewStopGuard(reviewStopWorkflow);
+      const guardedStopWorkflow = workflows[REVIEW_DEPLOY_WORKFLOW_FILE]
+        ? withReviewStopGuard(reviewStopWorkflow)
+        : reviewStopWorkflow;
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
       ]

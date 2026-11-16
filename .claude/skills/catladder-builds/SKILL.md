@@ -132,6 +132,23 @@ build: {
   apps), use the component's `verify` (post-deploy, does not block the
   deploy). The same suite can serve both, with `BASE_URL` as the switch.
 
+## Job timeouts
+
+`lint`, `test`, `audit` (build config), `postBuildTests` entries and the
+component's `verify` accept an optional `timeout`, a duration with units:
+
+```ts
+build: { type: "node", lint: { timeout: "1h 30m" } },
+verify: { command: "pnpm e2e", timeout: "10m" },
+```
+
+- Units: `s`, `m`/`min`, `h`/`hr`, `d`, `w` (also spelled out, e.g.
+  `"90 minutes"`). Bare numbers like `"600"` are rejected.
+- GitLab emits `timeout` as given; GitHub emits `timeout-minutes`
+  converted to whole minutes, rounded up (minimum 1).
+- Omitted = the platform default. An invalid value fails pipeline
+  generation with an error naming the job.
+
 ## Project images (custom CI job images)
 
 When a job needs a toolchain catladder doesn't ship (Java, Playwright,

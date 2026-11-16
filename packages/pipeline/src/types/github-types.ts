@@ -37,6 +37,7 @@ export type GithubJob = {
   permissions?: Record<string, string>;
   if?: string;
   "continue-on-error"?: boolean;
+  "timeout-minutes"?: number;
   outputs?: Record<string, string>;
   steps: GithubStep[];
 };

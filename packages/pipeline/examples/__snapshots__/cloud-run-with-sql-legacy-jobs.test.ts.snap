@@ -678,7 +678,6 @@ catladder-review.yml:
       name: api 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-marker
         - api-app-review
         - catladder-images
       container:
@@ -719,7 +718,6 @@ catladder-review.yml:
       name: api 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-marker
         - api-app-review
         - api-audit-review
         - api-docker-review
@@ -741,17 +739,6 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-deploy-review.sh
           shell: bash
-    catladder-review-deploy-marker:
-      name: 🏷️ mark review deploy
-      runs-on: ubuntu-latest
-      permissions:
-        pull-requests: write
-      env:
-        GH_TOKEN: \${{ github.token }}
-      steps:
-        - name: mark review deploy
-          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
-          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
@@ -763,7 +750,6 @@ catladder-review.yml:
         - api-lint-review
         - api-test-review
         - catladder-images
-        - catladder-review-deploy-marker
       if: always()
       steps:
         - name: catladder ✅
@@ -1059,30 +1045,6 @@ catladder-review-stop.yml:
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
             set -e
             set -e
-          shell: bash
-      needs:
-        - catladder-review-stop-guard
-      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
-    catladder-review-stop-guard:
-      name: 🚦 review stop guard
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-        pull-requests: read
-        statuses: read
-        actions: read
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      outputs:
-        stop: \${{ steps.main.outputs.stop }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            sparse-checkout: .catladder-generated/catci
-        - name: 🚦 review stop guard
-          id: main
-          run: node .catladder-generated/catci/index.js review-app github-stop-guard
           shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod
@@ -1634,8 +1596,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-api" "write dot env for api"
 cat <<EOF > api/.env
@@ -1657,8 +1620,9 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-api
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 EOF
 collapseable_section_end "write-dotenv-api"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
@@ -1787,8 +1751,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -1842,8 +1807,10 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -2068,8 +2035,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-api" "write dot env for api"
 cat <<EOF > api/.env
@@ -2091,8 +2059,9 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=$(printf %s "https://europe-west6-run.g
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 EOF
 collapseable_section_end "write-dotenv-api"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
@@ -2221,8 +2190,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -2276,8 +2246,10 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -2378,8 +2350,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-api" "write dot env for api"
 cat <<EOF > api/.env
@@ -2401,8 +2374,9 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-api
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 EOF
 collapseable_section_end "write-dotenv-api"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
@@ -2531,8 +2505,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -2586,8 +2561,10 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -2685,8 +2662,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-api" "write dot env for api"
 cat <<EOF > api/.env
@@ -2708,8 +2686,9 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-api
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 EOF
 collapseable_section_end "write-dotenv-api"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
@@ -2838,8 +2817,9 @@ export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.google
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-api"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -2893,8 +2873,10 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
 EOF
 
@@ -3387,8 +3369,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -3411,8 +3394,9 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-api
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -3555,8 +3539,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -3611,8 +3596,10 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -3870,8 +3857,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -3894,8 +3882,9 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -4044,8 +4033,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -4100,8 +4090,10 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -4250,8 +4242,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -4274,8 +4267,9 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-api
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -4418,8 +4412,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -4474,8 +4469,10 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -4608,8 +4605,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -4632,8 +4630,9 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-api
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -4776,8 +4775,9 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-api"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"GCLOUD_DEPLOY_credentialsKey\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -4832,8 +4832,10 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","GCLOUD_DEPLOY_credentialsKey"]
 
       EOF
     - collapseable_section_end "writeenvvars"

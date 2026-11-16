@@ -474,7 +474,6 @@ catladder-review.yml:
       name: app 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-marker
         - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -500,7 +499,6 @@ catladder-review.yml:
       name: app 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-marker
         - app-audit-review
         - app-docker-review
         - app-lint-review
@@ -529,17 +527,6 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/app-deploy-review.sh
           shell: bash
-    catladder-review-deploy-marker:
-      name: 🏷️ mark review deploy
-      runs-on: ubuntu-latest
-      permissions:
-        pull-requests: write
-      env:
-        GH_TOKEN: \${{ github.token }}
-      steps:
-        - name: mark review deploy
-          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
-          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
@@ -550,7 +537,6 @@ catladder-review.yml:
         - app-lint-review
         - app-test-review
         - catladder-images
-        - catladder-review-deploy-marker
       if: always()
       steps:
         - name: catladder ✅
@@ -750,14 +736,10 @@ catladder-review-stop.yml:
             fi
             echo "::endgroup::"
           shell: bash
-      needs:
-        - catladder-review-stop-guard
-      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     app-stop-review:
       name: app 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-stop-guard
         - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:b494d2e6e3ea
@@ -836,28 +818,6 @@ catladder-review-stop.yml:
             kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --namespace="pan-test-app-review"
             kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
             kubernetesDelete
-          shell: bash
-      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
-    catladder-review-stop-guard:
-      name: 🚦 review stop guard
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-        pull-requests: read
-        statuses: read
-        actions: read
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      outputs:
-        stop: \${{ steps.main.outputs.stop }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            sparse-checkout: .catladder-generated/catci
-        - name: 🚦 review stop guard
-          id: main
-          run: node .catladder-generated/catci/index.js review-app github-stop-guard
           shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod

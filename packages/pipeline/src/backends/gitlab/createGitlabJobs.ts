@@ -1,4 +1,5 @@
 import { isEmpty, isObject, merge } from "lodash-es";
+import { parseDurationToMinutes } from "../../utils/duration";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { createJobCacheFromCacheConfigs } from "../../build/cache/createJobCache";
 import { BASE_RETRY } from "../../defaults";
@@ -252,6 +253,10 @@ export const makeGitlabJob = (
         ? [{ when }]
         : []),
   ];
+  // fail generation on an invalid timeout (value is emitted as given)
+  if (rest.timeout !== undefined) {
+    parseDurationToMinutes(rest.timeout, name);
+  }
   const gitlabJob: GitlabJobDef = {
     retry: BASE_RETRY,
     interruptible: true,

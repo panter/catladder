@@ -54,6 +54,7 @@ export interface GitlabJobDef
     JobTemplate,
     | "after_script"
     | "allow_failure"
+    | "timeout"
     | "artifacts"
     | "before_script"
     | "coverage"

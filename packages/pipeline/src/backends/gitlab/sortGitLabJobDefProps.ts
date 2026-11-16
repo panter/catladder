@@ -28,6 +28,7 @@ const jobDefOrder: GitlabJobDefKey[] = [
   "retry",
   "interruptible",
   "allow_failure",
+  "timeout",
   "parallel",
   "hooks",
   "resource_group",

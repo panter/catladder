@@ -15,6 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { GithubScriptFiles } from "./scriptFiles";
+import { parseDurationToMinutes } from "../../utils/duration";
 import { GITHUB_INJECTED_WORKFLOW_ENV_NAMES } from "./ciVariables";
 import {
   createArtifactDownloadSteps,
@@ -497,6 +498,11 @@ export const makeGithubJob = (
     // failed the whole workflow — and took every job that needs it,
     // including the release, down with it.
     ...(job.allow_failure ? { "continue-on-error": true } : {}),
+    ...(job.timeout
+      ? {
+          "timeout-minutes": parseDurationToMinutes(job.timeout, job.name),
+        }
+      : {}),
     env,
     steps: [
       ...(skipCheckout
