@@ -269,6 +269,35 @@ describe("executeMigration / runMigration", () => {
     );
   });
 
+  it("fails only mismatched entries after a partial verification failure", async () => {
+    const existing = { [raw("dev", "web", "API_KEY")]: "old-target" };
+    const { vault, readAllSecrets } = fakeVault(existing);
+    readAllSecrets.mockResolvedValue({
+      ...source,
+      [raw("dev", "web", "API_KEY")]: "wrong-overwritten-value",
+      [raw("dev", "web", "SMTP")]: "wrong-created-value",
+    });
+    const { io, log } = makeIo();
+    const plan = planMigration(scoped, source, existing, { overwrite: true });
+    const result = await runMigration(io, plan, vault);
+    expect(result.overwritten).toEqual([]);
+    expect(result.created).toEqual(["prod:web:API_KEY", "dev:worker:QUEUE"]);
+    expect(result.failed).toEqual(["dev:web:API_KEY", "dev:web:SMTP"]);
+    const output = [
+      formatPlan(plan),
+      formatResult(result),
+      ...log.mock.calls.flat(),
+    ].join("\n");
+    for (const value of [
+      ...Object.values(source),
+      "old-target",
+      "wrong-overwritten-value",
+      "wrong-created-value",
+    ]) {
+      expect(output).not.toContain(value);
+    }
+  });
+
   it("reads the target back only once", async () => {
     const { vault, readAllSecrets } = fakeVault();
     const { io } = makeIo();

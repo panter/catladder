@@ -1,5 +1,5 @@
 import { getSecretVarName } from "@catladder/pipeline";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SecretsVault } from "../../../../vault/types";
 
 const mocks = vi.hoisted(() => ({
@@ -35,6 +35,7 @@ import { writeSecretsAndMirror } from "../../../../secrets/writeSecrets";
 import { createVault } from "../../../../vault/createVault";
 import { getScopedSecretKeys, resolveSecretsScope } from "../scope";
 import { commandSecretsMigrate } from "../commandSecretsMigrate";
+import { FILL_ME } from "../document";
 
 const NAME = getSecretVarName("local", "web", "API_KEY");
 
@@ -84,6 +85,11 @@ describe("project secrets-migrate", () => {
     mocks.configured = { type: "gitlab" };
   });
 
+  afterEach(() => {
+    expect(gitlab.writeSecrets).not.toHaveBeenCalled();
+    expect(writeSecretsAndMirror).not.toHaveBeenCalled();
+  });
+
   it("writes to a non-configured target without cache write-through", async () => {
     const { manager, promise } = await run(
       { to: "bitwarden", yes: true },
@@ -112,9 +118,13 @@ describe("project secrets-migrate", () => {
   });
 
   it("dry run writes nothing", async () => {
-    const { promise } = await run({ to: "bitwarden", dryRun: true }, gitlab);
+    const { ctx, promise } = await run(
+      { to: "bitwarden", dryRun: true },
+      gitlab,
+    );
     await promise;
     expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+    expect(ctx.confirm).not.toHaveBeenCalled();
   });
 
   it("throws on conflicts without --overwrite", async () => {
@@ -123,6 +133,75 @@ describe("project secrets-migrate", () => {
     const { promise } = await run({ to: "bitwarden", yes: true }, gitlab);
     await expect(promise).rejects.toThrow(/conflicts/);
     expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+  });
+
+  it("asks for confirmation and writes after acceptance", async () => {
+    const { ctx, promise } = await run({ to: "bitwarden" }, gitlab);
+    await expect(promise).resolves.toBeUndefined();
+    expect(ctx.confirm).toHaveBeenCalledOnce();
+    expect(ctx.confirm).toHaveBeenCalledWith("write 1 secrets? 🤔");
+    expect(bitwarden.writeSecrets).toHaveBeenCalledOnce();
+  });
+
+  it("overwrites a conflict with a backup when requested", async () => {
+    bitwarden = fake("bitwarden:catladder", { [NAME]: "old-target-value" });
+    mocks.vaults.bitwarden = bitwarden;
+    const { ctx, promise } = await run(
+      { to: "bitwarden", overwrite: true, yes: true },
+      gitlab,
+    );
+    await expect(promise).resolves.toBeUndefined();
+    expect(bitwarden.writeSecrets).toHaveBeenCalledWith(
+      expect.anything(),
+      "local",
+      "web",
+      { API_KEY: "s3cret" },
+      { backup: true },
+    );
+    expect(await bitwarden.readAllSecrets(ctx as any)).toEqual({
+      [NAME]: "s3cret",
+    });
+    const output = JSON.stringify(ctx.log.mock.calls);
+    expect(output).not.toContain("s3cret");
+    expect(output).not.toContain("old-target-value");
+  });
+
+  it.each([undefined, "", FILL_ME, "s3cret"])(
+    "skips an unset or equal source (%s) without prompting",
+    async (value) => {
+      vi.mocked(gitlab.readAllSecrets).mockResolvedValue(
+        value === undefined ? {} : { [NAME]: value },
+      );
+      bitwarden = fake("bitwarden:catladder", { [NAME]: "s3cret" });
+      mocks.vaults.bitwarden = bitwarden;
+      const { ctx, promise } = await run({ to: "bitwarden" }, gitlab);
+      await expect(promise).resolves.toBeUndefined();
+      expect(ctx.confirm).not.toHaveBeenCalled();
+      expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+      expect(bitwarden.readAllSecrets).toHaveBeenCalledOnce();
+    },
+  );
+
+  it("sanitizes verification read errors after a successful write", async () => {
+    vi.mocked(bitwarden.readAllSecrets)
+      .mockImplementationOnce(async () => ({}))
+      .mockImplementationOnce(async (io) => {
+        io.log("verification-backend-secret");
+        throw new Error("verification-error-secret");
+      });
+    const { ctx, promise } = await run({ to: "bitwarden", yes: true }, gitlab);
+    const error = await promise.catch((e: Error) => e);
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toContain("local:web:API_KEY");
+    expect(bitwarden.writeSecrets).toHaveBeenCalledOnce();
+    const output = JSON.stringify(ctx.log.mock.calls) + error.message;
+    for (const value of [
+      "s3cret",
+      "verification-backend-secret",
+      "verification-error-secret",
+    ]) {
+      expect(output).not.toContain(value);
+    }
   });
 
   it("aborts when the confirmation is declined", async () => {
