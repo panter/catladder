@@ -148,6 +148,28 @@ describe("executeMigration / runMigration", () => {
     expect(result.failed).toEqual([]);
   });
 
+  it("preserves literal strings and whitespace through writing and verification", async () => {
+    const { vault, store } = fakeVault();
+    const { io } = makeIo();
+    const values = [
+      "null",
+      "false",
+      "  value\nwith whitespace  ",
+      "🚨 FILL ME trailing",
+    ];
+    const rawValues = Object.fromEntries(
+      Object.keys(source).map((key, i) => [key, values[i]]),
+    );
+    const result = await runMigration(
+      io,
+      planMigration(scoped, rawValues, {}, { overwrite: false }),
+      vault,
+    );
+    expect(store).toEqual(rawValues);
+    expect(result.created).toHaveLength(4);
+    expect(result.failed).toEqual([]);
+  });
+
   it("copies only the scoped part", async () => {
     const { vault, store } = fakeVault();
     const { io } = makeIo();

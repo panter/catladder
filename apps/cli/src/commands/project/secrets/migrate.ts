@@ -114,17 +114,16 @@ export const emptyResult = (): MigrationResult => ({
   failed: [],
 });
 
-/** removes every known secret value from an error message */
-const sanitize = (message: string, plan: MigrationEntry[]): string =>
-  plan
-    .filter((e) => e.value)
-    .map((e) => e.value as string)
-    // longest first, so a value that contains another one is fully masked
-    .sort((a, b) => b.length - a.length)
-    .reduce((m, v) => m.split(v).join("***"), message);
-
-const errorMessage = (e: unknown) =>
-  e instanceof Error ? e.message : String(e);
+/** Keep arbitrary backend diagnostics out of migration output. Prompts still
+ * delegate to the original context, whose methods may depend on `this`.
+ */
+export const migrationVaultIO = (io: IO): IO => ({
+  interactive: io.interactive,
+  log: () => {},
+  getVaultManager: () => io.getVaultManager(),
+  confirm: (message) => io.confirm(message),
+  promptDirect: (spec) => io.promptDirect(spec),
+});
 
 /**
  * writes create/overwrite entries per env:component with `backup: true`
@@ -164,7 +163,7 @@ export const executeMigration = async (
   for (const [id, { env, componentName, entries }] of groups) {
     try {
       await target.writeSecrets(
-        io,
+        migrationVaultIO(io),
         env,
         componentName,
         Object.fromEntries(entries.map((e) => [e.key, e.value])),
@@ -175,10 +174,9 @@ export const executeMigration = async (
           entryName(e),
         );
       }
-    } catch (error) {
-      io.log(
-        `❌ failed to write ${id}: ${sanitize(errorMessage(error), plan)}`,
-      );
+    } catch {
+      // Backend errors may contain old, unrelated or encoded secret values.
+      io.log(`❌ failed to write ${id}`);
       result.failed.push(...entries.map(entryName));
     }
   }
@@ -204,11 +202,9 @@ export const verifyMigration = async (
 
   let actual: Record<string, string> | null = null;
   try {
-    actual = await target.readAllSecrets(io);
-  } catch (error) {
-    io.log(
-      `❌ could not read back the target for verification: ${sanitize(errorMessage(error), plan)}`,
-    );
+    actual = await target.readAllSecrets(migrationVaultIO(io));
+  } catch {
+    io.log("❌ could not read back the target for verification");
   }
 
   const bad = new Set(

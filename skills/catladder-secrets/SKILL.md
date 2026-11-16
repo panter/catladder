@@ -116,7 +116,8 @@ values (names and counts only).
    change `secrets.vault` yet: `--from` defaults to the configured vault,
    `--to` names the target (`gitlab` or `bitwarden`; bitwarden takes
    `--to-collection` / `--from-collection`, default the configured
-   collection, else `catladder`).
+   collection, else `catladder`). `--from-collection` also works when
+   `--from` is omitted.
 2. Preview: `yarn catladder project secrets-migrate --to bitwarden --dry-run`
    (scope and `--key KEY1,KEY2` work as in the other secrets commands,
    e.g. `dev:web`). Nothing is written.
@@ -133,7 +134,8 @@ Details to know:
   (empty / "FILL ME") source values are skipped.
 - A value that already exists in the target with a different value is a
   **conflict**: it is not overwritten, and the command exits non-zero.
-  Re-run with `--overwrite` to replace it (the target keeps a backup copy
+  This also returns non-zero in `--dry-run`. Re-run with `--overwrite`
+  to replace it (the target keeps a backup copy
   of the old value). Write or verification failures also exit non-zero;
   other components are still migrated.
 - Only declared secrets are migrated. The hidden provisioned keys
@@ -144,6 +146,8 @@ Details to know:
   unchanged, so no redeploy is needed for the migration itself; redeploy
   (or `secrets-sync-github`) only after you actually change a value.
 - Source and target must differ; the command refuses otherwise.
+- Vault failures report entry names and omit backend diagnostics, which may
+  contain values. Check vault access separately when a read or write fails.
 
 ## GitHub pipelines
 

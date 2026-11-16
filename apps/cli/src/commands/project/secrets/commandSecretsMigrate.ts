@@ -4,6 +4,8 @@ import { getProjectConfig } from "../../../config/getProjectConfig";
 import { createVault } from "../../../vault/createVault";
 import type { SecretsVault } from "../../../vault/types";
 import {
+  entryName,
+  migrationVaultIO,
   formatPlan,
   formatResult,
   planMigration,
@@ -99,13 +101,11 @@ export const commandSecretsMigrate = defineCommand({
     const toType = parseVaultType(await ctx.get("to"), "to");
     const configuredVault = getVaultConfig(config);
 
-    const sourceConfig = fromType
-      ? resolveVaultConfig(
-          parseVaultType(fromType, "from"),
-          { collection: (await ctx.get("fromCollection")) || undefined },
-          config,
-        )
-      : configuredVault;
+    const sourceConfig = resolveVaultConfig(
+      fromType ? parseVaultType(fromType, "from") : configuredVault.type,
+      { collection: (await ctx.get("fromCollection")) || undefined },
+      config,
+    );
     const targetConfig = resolveVaultConfig(
       toType,
       { collection: (await ctx.get("toCollection")) || undefined },
@@ -122,16 +122,35 @@ export const commandSecretsMigrate = defineCommand({
 
     const overwrite = Boolean(await ctx.get("overwrite"));
     ctx.log(`migrating ${source.id} → ${target.id}`);
+    const vaultIO = migrationVaultIO(ctx);
+    const readVault = async (vault: SecretsVault, role: string) => {
+      try {
+        return await vault.readAllSecrets(vaultIO);
+      } catch {
+        const names = scoped.flatMap(({ env, componentName, keys }) =>
+          keys.map((key) => entryName({ env, componentName, key })),
+        );
+        throw new Error(
+          `could not read ${role} vault for: ${names.join(", ")}`,
+        );
+      }
+    };
     const plan = planMigration(
       scoped,
-      await source.readAllSecrets(ctx),
-      await target.readAllSecrets(ctx),
+      await readVault(source, "source"),
+      await readVault(target, "target"),
       { overwrite },
     );
     ctx.log(formatPlan(plan));
 
     if (await ctx.get("dryRun")) {
       ctx.log("dry run, nothing written 🏜️");
+      const conflicts = plan.filter((e) => e.action === "conflict");
+      if (conflicts.length > 0) {
+        throw new Error(
+          `😿 conflicts left (${conflicts.map(entryName).join(", ")}) — re-run with --overwrite`,
+        );
+      }
       return;
     }
 

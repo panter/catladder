@@ -15,14 +15,16 @@ vi.mock("@catladder/pipeline", async (orig) => ({
   getVaultConfig: () => mocks.configured,
 }));
 vi.mock("../scope", () => ({
-  resolveSecretsScope: async () => ({}),
+  resolveSecretsScope: vi.fn(async () => ({})),
   secretsScopeChoices: async () => [],
-  getScopedSecretKeys: async () => [
+  getScopedSecretKeys: vi.fn(async () => [
     { env: "local", componentName: "web", keys: ["API_KEY"] },
-  ],
+  ]),
 }));
 vi.mock("../../../../vault/createVault", () => ({
-  createVault: (_c: unknown, vc: { type: string }) => mocks.vaults[vc.type],
+  createVault: vi.fn(
+    (_c: unknown, vc: { type: string }) => mocks.vaults[vc.type],
+  ),
 }));
 
 vi.mock("../../../../secrets/writeSecrets", () => ({
@@ -30,6 +32,8 @@ vi.mock("../../../../secrets/writeSecrets", () => ({
 }));
 
 import { writeSecretsAndMirror } from "../../../../secrets/writeSecrets";
+import { createVault } from "../../../../vault/createVault";
+import { getScopedSecretKeys, resolveSecretsScope } from "../scope";
 import { commandSecretsMigrate } from "../commandSecretsMigrate";
 
 const NAME = getSecretVarName("local", "web", "API_KEY");
@@ -73,6 +77,7 @@ describe("project secrets-migrate", () => {
   let gitlab: SecretsVault;
   let bitwarden: SecretsVault;
   beforeEach(() => {
+    vi.clearAllMocks();
     gitlab = fake("gitlab", { [NAME]: "s3cret" });
     bitwarden = fake("bitwarden:catladder");
     mocks.vaults = { gitlab, bitwarden };
@@ -143,5 +148,93 @@ describe("project secrets-migrate", () => {
     const output = JSON.stringify(ctx.log.mock.calls) + (err as Error).message;
     expect(output).not.toContain("s3cret");
     expect(writeSecretsAndMirror).not.toHaveBeenCalled();
+  });
+  it("passes the scope and comma-separated key filter to the shared helpers", async () => {
+    const { promise } = await run(
+      {
+        to: "bitwarden",
+        envComponent: "local:web",
+        key: " API_KEY, SMTP ",
+        dryRun: true,
+      },
+      gitlab,
+    );
+    await promise;
+    expect(resolveSecretsScope).toHaveBeenCalledWith("local:web");
+    expect(getScopedSecretKeys).toHaveBeenCalledWith({}, ["API_KEY", "SMTP"]);
+  });
+
+  it("honors --from-collection when --from defaults to the configured vault", async () => {
+    mocks.configured = { type: "bitwarden", collection: "configured" };
+    const { promise } = await run(
+      { to: "gitlab", fromCollection: "source-override", dryRun: true },
+      bitwarden,
+    );
+    await promise;
+    expect(createVault).toHaveBeenNthCalledWith(
+      1,
+      expect.anything(),
+      { type: "bitwarden", collection: "source-override" },
+      false,
+    );
+  });
+
+  it("reports dry-run conflicts without prompting or writing", async () => {
+    mocks.vaults.bitwarden = fake("bitwarden:catladder", {
+      [NAME]: "existing",
+    });
+    const { ctx, promise } = await run(
+      { to: "bitwarden", dryRun: true },
+      gitlab,
+    );
+    await expect(promise).rejects.toThrow("local:web:API_KEY");
+    expect(ctx.confirm).not.toHaveBeenCalled();
+    expect(mocks.vaults.bitwarden.writeSecrets).not.toHaveBeenCalled();
+  });
+
+  it.each(["gitlab", "bitwarden"])(
+    "hides backend read diagnostics for %s",
+    async (type) => {
+      mocks.vaults[type].readAllSecrets.mockImplementation(async (io: any) => {
+        io.log("unrelated-secret-from-backend");
+        throw new Error("encoded-secret-from-backend");
+      });
+      const { ctx, promise } = await run(
+        { to: "bitwarden", yes: true },
+        gitlab,
+      );
+      const error = await promise.catch((e: Error) => e);
+      expect(error.message).toContain("local:web:API_KEY");
+      expect(JSON.stringify(ctx.log.mock.calls) + error.message).not.toContain(
+        "secret-from-backend",
+      );
+      expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+    },
+  );
+
+  it("hides backend write diagnostics and reports the failed entry", async () => {
+    vi.mocked(bitwarden.writeSecrets).mockImplementation(async (io) => {
+      io.log("old-target-secret");
+      throw new Error("encoded-unrelated-secret");
+    });
+    const { ctx, promise } = await run({ to: "bitwarden", yes: true }, gitlab);
+    const error = await promise.catch((e: Error) => e);
+    expect(error.message).toContain("local:web:API_KEY");
+    const output = JSON.stringify(ctx.log.mock.calls) + error.message;
+    expect(output).not.toContain("old-target-secret");
+    expect(output).not.toContain("encoded-unrelated-secret");
+    expect(writeSecretsAndMirror).not.toHaveBeenCalled();
+  });
+
+  it("verification uses a second raw read even with a configured target manager", async () => {
+    mocks.configured = { type: "bitwarden" };
+    vi.mocked(bitwarden.readAllSecrets).mockResolvedValue({});
+    const { manager, promise } = await run(
+      { from: "gitlab", to: "bitwarden", yes: true },
+      bitwarden,
+    );
+    await expect(promise).rejects.toThrow("local:web:API_KEY");
+    expect(manager.writeSecrets).toHaveBeenCalledOnce();
+    expect(bitwarden.readAllSecrets).toHaveBeenCalledTimes(2);
   });
 });
