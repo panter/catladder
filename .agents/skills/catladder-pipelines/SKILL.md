@@ -52,20 +52,27 @@ Stages: setup → test → build → post-build (`postBuildTests` against
 the build output, block the deploy) → deploy → verify (post-deploy
 checks), plus stop jobs for review-app teardown.
 
-## Superseded pipelines are cancelled
+## Superseded pipelines
 
-Pushing a new commit cancels the pipeline of the previous one, so the
-runners are not busy with results nobody will read.
+Cancellation depends on the CI backend and pipeline trigger.
 
 | Pipeline               | On a new commit                             |
 | ---------------------- | ------------------------------------------- |
 | `mr`                   | cancelled                                   |
-| `mainBranch` (dev)     | cancelled, except a release already running |
+| `mainBranch` (dev)     | GitLab: cancelled except a running release; GitHub: concurrent by default |
 | `taggedRelease`        | **runs through** — never cancelled          |
 | agent runs (`trigger`) | **runs through** — never cancelled          |
 
 - **GitHub**: the generated MR workflow sets `concurrency` with
   `cancel-in-progress: true`.
+- **GitHub main**: opt in with
+  `pipelines: { github: { concurrency: { main: { cancelInProgress: true } } } }`.
+  `main.group` defaults to `"catladder-main"`; `cancelInProgress` defaults
+  to `false` (wait for the running workflow). An empty `main: {}` enables
+  those defaults. Without `main`, no concurrency block is generated.
+  This affects only the main workflow. Setting `cancelInProgress: true`
+  also cancels an in-flight automatic release job in that workflow;
+  prefer `false` for projects with automatic releases.
 - **GitLab**: generated `workflow:auto_cancel:on_new_commit:
 interruptible`, with per-rule `none` for tags and agent runs. Every
   job carries an explicit `interruptible`, jobs that must finish
