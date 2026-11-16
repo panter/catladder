@@ -105,7 +105,7 @@ Key concepts:
     `inherit: { config: "dev" }` inherits config only,
     `inherit: { config: "dev", secrets: "dev" }` both.
 - **Review apps**: top-level `reviewApps: { deploy, label, skipLabel,
-  drafts }` decides whether merge/pull requests deploy their review
+drafts }` decides whether merge/pull requests deploy their review
   apps — every MR/PR (default), opt-in or opt-out by label, or on
   request; and what drafts run. See the `catladder-pipelines` skill.
 - **Pipelines**: `pipelines: { gitlab: true, github: true }` selects
@@ -113,7 +113,12 @@ Key concepts:
   `true` allow per-pipeline settings (e.g. `runnerVariables`,
   `gitRemote`, and `repository` — GitHub only, for lowercasing GHCR
   image paths; and `artifactRetentionDays` — GitHub only, retention
-  of uploaded artifacts; see the `catladder-pipelines` skill).
+  of uploaded artifacts; and `concurrency.main: { group?, cancelInProgress? }`
+  — GitHub only, opt-in main workflow concurrency (defaults when set:
+  group `catladder-main`, cancellation `false`). Main has no concurrency
+  block by default. Queueing (`false`) is the safe choice with automatic
+  releases; `true` can cancel an in-flight auto release. See the
+  `catladder-pipelines` skill for the example and deployment caveat).
 - **Package manager**: yarn and pnpm are supported and autodetected
   (from the `packageManager` field in package.json or the lockfile;
   yarn is the fallback). `packageManager: "pnpm" | "yarn"` at the top
