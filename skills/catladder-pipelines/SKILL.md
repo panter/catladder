@@ -50,27 +50,42 @@ Stages: setup → test → build → post-build (`postBuildTests` against
 the build output, block the deploy) → deploy → verify (post-deploy
 checks), plus stop jobs for review-app teardown.
 
-## Superseded pipelines
+## Superseded pipeline cancellation
 
-Cancellation depends on the CI backend and pipeline trigger.
+Cancellation on a new commit depends on the CI backend:
 
-| Pipeline               | On a new commit                             |
-| ---------------------- | ------------------------------------------- |
-| `mr`                   | cancelled                                   |
-| `mainBranch` (dev)     | GitLab: cancelled except a running release; GitHub: concurrent by default |
-| `taggedRelease`        | **runs through** — never cancelled          |
-| agent runs (`trigger`) | **runs through** — never cancelled          |
+| Pipeline               | GitHub                                           | GitLab                                      |
+| ---------------------- | ------------------------------------------------ | ------------------------------------------- |
+| `mr`                   | cancelled                                        | cancelled                                   |
+| `mainBranch` (dev)     | runs concurrently by default; configurable below | cancelled, except a release already running |
+| `taggedRelease`        | **runs through**                                 | **runs through**                            |
+| agent runs (`trigger`) | **runs through**                                 | **runs through**                            |
 
 - **GitHub**: the generated MR workflow sets `concurrency` with
-  `cancel-in-progress: true`.
-- **GitHub main**: opt in with
-  `pipelines: { github: { concurrency: { main: { cancelInProgress: true } } } }`.
-  `main.group` defaults to `"catladder-main"`; `cancelInProgress` defaults
-  to `false` (wait for the running workflow). An empty `main: {}` enables
-  those defaults. Without `main`, no concurrency block is generated.
-  This affects only the main workflow. Setting `cancelInProgress: true`
-  also cancels an in-flight automatic release job in that workflow;
-  prefer `false` for projects with automatic releases.
+  `cancel-in-progress: true`. Main has no concurrency block by default.
+  Set `pipelines.github.concurrency.main` to opt in:
+
+  ```ts
+  pipelines: {
+    github: {
+      concurrency: {
+        main: { group: "catladder-main", cancelInProgress: false },
+      },
+    },
+  },
+  ```
+
+  When `main` is set, `group` defaults to `catladder-main` and
+  `cancelInProgress` defaults to `false`. This serializes main runs in
+  the group; GitHub can replace an older pending run with a newer one.
+  Set `cancelInProgress: true` to also cancel the running main pipeline
+  on a new push. Cloud Run jobs and service updates already started
+  still finish; the next run deploys the newer state. Cancellation can
+  also cancel an in-flight auto release job in the main workflow, so
+  queueing (`false`) is the safe choice with automatic releases.
+  The option affects only the GitHub main workflow; review, release,
+  stop, branch-trigger workflows and GitLab output are unchanged.
+
 - **GitLab**: generated `workflow:auto_cancel:on_new_commit:
 interruptible`, with per-rule `none` for tags and agent runs. Every
   job carries an explicit `interruptible`, jobs that must finish
