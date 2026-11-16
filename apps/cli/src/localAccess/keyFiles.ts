@@ -34,6 +34,21 @@ const getFolder = async () =>
   join(await getProjectRootPath(), ".catladder", "local-access");
 
 /**
+ * path of the key file of a component/env, or undefined if catenv has
+ * not written it (no declaration, or no key in the secret store)
+ */
+export const getLocalAccessKeyFilePath = async (
+  env: string,
+  componentName: string,
+): Promise<string | undefined> => {
+  const path = join(
+    await getFolder(),
+    getLocalAccessKeyFileName(env, componentName),
+  );
+  return existsSync(path) ? path : undefined;
+};
+
+/**
  * env vars pointing at the key files that exist for the component
  * (only paths, no secrets): one per env, plus the declared
  * `credentialsEnvVar` names

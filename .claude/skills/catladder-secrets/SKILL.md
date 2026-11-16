@@ -145,6 +145,16 @@ non-CI vault (e.g. bitwarden) — `project setup` refuses with the gitlab
 vault. After a key rotation on another machine, run
 `catenv --vault-mode refresh`.
 
+To read Cloud Run logs with that key use
+`catladder logs <env>:<component> [--job <name>] [--execution <id>] [--since 1h] [--severity ERROR] [--limit 200] [--review-slug pr112] [--json]`
+(e.g. the cause of a failed job execution: `catladder logs dev:web --job migrate --execution r8hjv`).
+It runs `gcloud logging read` as the local access service account with a
+throwaway `CLOUDSDK_CONFIG`; `~/.config/gcloud` and ADC are never read or
+written. Entries are oldest first, with a default window of `--since 1h`.
+Log output goes to stdout; `--json` prints only a JSON array. It
+fails with a pointer to `project setup` / `catenv` when the declaration
+or the key file is missing. Review envs need `--review-slug`.
+
 The `vertex` preset grants `roles/aiplatform.user` (to call Vertex AI
 models, e.g. local evals). It is **not** read-only: it can use and bill
 every Vertex AI API of the project and create/change/delete Vertex AI
