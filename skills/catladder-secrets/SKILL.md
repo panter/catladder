@@ -1,6 +1,6 @@
 ---
 name: catladder-secrets
-description: Managing environment variables and secrets in a catladder project. Use when adding or changing env vars in catladder.ts (vars.public / vars.secret), when a secret value must be set, rotated or checked, when secrets need syncing to GitHub, or when local .env / direnv environment questions come up. Triggers on "env var", "secret", "vars", "catenv", ".env", "config-secrets", "secrets-set", "secrets-list", "rotate a secret", "set a secret".
+description: Managing environment variables and secrets in a catladder project. Use when adding or changing env vars in catladder.ts (vars.public / vars.secret), when a secret value must be set, rotated or checked, when secrets need migrating between vaults or syncing to GitHub, or when local .env / direnv environment questions come up. Triggers on "env var", "secret", "vars", "catenv", ".env", "config-secrets", "secrets-set", "secrets-list", "secrets-migrate", "switch vault", "rotate a secret", "set a secret".
 ---
 
 # Env vars and secrets with catladder
@@ -85,9 +85,58 @@ Humans may instead use the interactive editor flow
 (`project config-secrets`, opens `$EDITOR`); as an agent, use the
 commands above.
 
-All of these write to the secrets vault (the source of truth) and
+The editing commands above write to the secrets vault (the source of truth) and
 automatically mirror to the enabled CI backends — which vault is
 configured makes no difference to the commands.
+
+## Migrating secrets between vaults
+
+`project secrets-migrate [env:component] --to <vault>` copies declared
+secrets between `gitlab` and `bitwarden`. Omit the scope for all
+environments/components, or use the scopes above; `--key KEY1,KEY2`
+narrows the selection. `--to` is required; `--from` defaults to the
+configured vault. For Bitwarden, select collections with
+`--from-collection` / `--to-collection` (the configured collection when
+the vault type matches, otherwise `catladder`). Use explicit `--from
+bitwarden` with `--from-collection` when selecting a source collection.
+Source and target must identify different vaults/collections.
+
+```sh
+# preview names and counts; no writes or confirmation
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --dry-run
+# non-interactive copy after reviewing the plan
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --yes
+# copy selected keys between Bitwarden collections
+pnpm catladder project secrets-migrate dev:web --from bitwarden --from-collection old --to bitwarden --to-collection new --key API_KEY --yes
+```
+
+Unset/empty source values and placeholders are skipped; equal target
+values are left alone. Differing target values are conflicts unless
+`--overwrite` is supplied, which replaces them with backups. Without
+`--yes`, pending writes require confirmation. `--dry-run` only prints
+the plan; migration output shows names/counts, never secret values.
+Writes are verified by re-reading the target vault. Failed writes,
+verification failures or remaining conflicts make the migration exit
+non-zero.
+
+Migration never modifies the source, changes `catladder.ts`, or mirrors
+to CI. Existing CI variables remain untouched (the GitLab vault itself
+stores secrets in project variables, so targeting it necessarily writes
+those vault entries).
+
+To switch vaults:
+
+1. Preview and run migration while `secrets.vault` still points to the
+   old vault. Resolve conflicts/failures before continuing.
+2. Change `secrets.vault` in `catladder.ts` to the destination (including
+   its Bitwarden collection), then run `pnpm catenv` and commit the config
+   and generated files.
+3. Re-run `project setup` for provisioned secrets as described below;
+   run `project secrets-sync-github` if GitHub environment secrets need
+   syncing. These are separate operations from migration.
+4. Keep the old vault read-only for rollback; migration does not delete
+   or disable it. Switching the config back restores the old source of
+   truth, whose values may become stale after writes to the new vault.
 
 ## Provisioned secrets
 
