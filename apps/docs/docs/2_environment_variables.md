@@ -144,7 +144,7 @@ The correct way is `EDITOR="code --wait"`.
 
 ### Scoped and non-interactive secrets commands
 
-All secrets commands accept a **scope** argument: `dev:app` (one env of one component), `dev:` (one env, all components), `:app` (all envs of one component — handy for rotating a credential everywhere), or nothing (everything). `--key KEY1,KEY2` narrows to specific secrets; this also works for `project config-secrets`.
+The commands in this section accept a **scope** argument: `dev:app` (one env of one component), `dev:` (one env, all components), `:app` (all envs of one component — handy for rotating a credential everywhere), or nothing (everything). `--key KEY1,KEY2` narrows to specific secrets; this also works for `project config-secrets`.
 
 Besides the editor flow there are non-interactive commands, suitable for scripts and coding agents:
 
@@ -169,6 +169,59 @@ catladder project secrets-push dev: --file secrets.yml
 catladder makes a copy of old values as a backup; you can restore those manually from the vault if needed.
 
 :::
+
+### Migrating secrets and switching vaults
+
+Use `catladder project secrets-migrate [env:component] --to <vault>` to
+copy declared secrets between `gitlab` and `bitwarden`. `--to` is required;
+`--from` defaults to the configured vault. Omit the scope to migrate all
+environments/components, or use `dev:app`, `dev:` or `:app`. Limit keys
+with `--key KEY1,KEY2`.
+
+For Bitwarden, `--from-collection` and `--to-collection` select the source
+and destination collections. They default to the configured collection
+when the vault type matches, otherwise to `catladder`. Specify `--from
+bitwarden` explicitly when using `--from-collection`. Source and target
+must be different vaults or collections.
+
+```sh
+# preview names and counts without writes or confirmation
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --dry-run
+
+# copy after reviewing the plan; --yes skips write confirmation
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --yes
+
+# select a source explicitly and migrate one component
+pnpm catladder project secrets-migrate :app --from bitwarden --from-collection old --to bitwarden --to-collection new --yes
+```
+
+Empty/unset source values and placeholders are skipped, and equal target
+values are left alone. Differing target values are conflicts; add
+`--overwrite` to replace them with backups. Without `--yes`, writes
+require confirmation. `--dry-run` only prints the plan. Output contains
+names and counts, never secret values. The command re-reads the target
+to verify writes and exits non-zero for failed writes, verification
+failures or unresolved conflicts.
+
+The source is never modified. Migration does not change `catladder.ts`
+or mirror secrets into CI, so existing CI variables remain untouched.
+When GitLab is the target vault, its vault entries are project variables
+and are written as part of the copy.
+
+To switch the project to a new vault:
+
+1. With the old `secrets.vault` still configured, preview with `--dry-run`,
+   then migrate. Resolve any conflicts/failures before switching.
+2. Update `secrets.vault` in `catladder.ts` to the destination, including
+   the Bitwarden collection if used. Run `pnpm catenv` and commit the
+   configuration and generated files.
+3. Re-run `pnpm catladder project setup` to provision hidden deployment
+   credentials in the new vault: they are not declared user secrets and
+   are not copied by this command. If needed, sync GitHub environment
+   secrets separately with `pnpm catladder project secrets-sync-github`.
+4. Keep the old vault read-only for rollback. Migration never deletes or
+   disables it. To roll back, restore the old `secrets.vault` config;
+   remember its values can become stale after changes in the new vault.
 
 ## catenv - Env-vars in local development
 
