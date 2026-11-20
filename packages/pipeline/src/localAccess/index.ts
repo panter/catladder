@@ -1,5 +1,6 @@
 import { getAllEnvs } from "../config/configruedEnvs";
 import { getEnvConfig } from "../context/getEnvConfig";
+import { getEnvType } from "../context/getEnvType";
 import { isOfDeployType } from "../deploy/types";
 import type { Config, LocalAccessConfig, LocalAccessGcpPreset } from "../types";
 
@@ -111,19 +112,67 @@ export const getLocalAccessConfig = (
   return declared || undefined;
 };
 
+/** granted for the read-only db access, to connect through the cloud sql proxy */
+export const LOCAL_ACCESS_DB_GCP_ROLE = "roles/cloudsql.client";
+
+/** name of the postgres role `project setup` creates for the read-only db access */
+export const LOCAL_ACCESS_DB_ROLE_NAME = "catladder_readonly";
+
+/** local port the generated db env file points at (the cloud sql proxy has to listen there) */
+export const LOCAL_ACCESS_DB_LOCAL_PORT = 54330;
+
+/**
+ * the db access declared for `env`: `"readonly"` or undefined.
+ *
+ * `prod` envs (by type) only get it when the declaration says
+ * `allowProd: true`. The project default silently skips them (it is
+ * meant for dev/review), an env's own declaration without `allowProd`
+ * throws, since it can only be a mistake.
+ */
+export const getLocalAccessDb = (
+  config: Pick<Config, "localAccess" | "environments">,
+  env: string,
+): "readonly" | undefined => {
+  const db = getLocalAccessConfig(config, env)?.db;
+  if (!db) return undefined;
+  const { mode, allowProd } =
+    typeof db === "string" ? { mode: db, allowProd: false } : db;
+  if (mode !== "readonly") {
+    throw new Error(
+      `localAccess (${env}): unknown db mode '${mode}', known: readonly`,
+    );
+  }
+  if (getEnvType(env, {}, config.environments) === "prod" && !allowProd) {
+    const own = config.environments?.[env];
+    if (own && own.localAccess !== undefined) {
+      throw new Error(
+        `localAccess (${env}): db access is not allowed for prod envs unless declared with allowProd: db: { mode: "readonly", allowProd: true }`,
+      );
+    }
+    return undefined;
+  }
+  return mode;
+};
+
 /**
  * the gcp roles local access grants in `env`: preset roles plus the
- * explicit ones, deduplicated and sorted. Throws on an unknown preset,
+ * explicit ones (plus the cloud sql client role for the db access),
+ * deduplicated and sorted. Throws on an unknown preset,
  * a malformed role or a denied (write/admin) role.
  */
 export const getLocalAccessGcpRoles = (
   config: Pick<Config, "localAccess" | "environments">,
   env: string,
 ): string[] => {
-  const gcp = getLocalAccessConfig(config, env)?.gcp;
-  if (!gcp) return [];
-
   const roles = new Set<string>();
+  // the read-only db access reaches the instance through the proxy,
+  // which needs the client role (not accepted in `roles`, see
+  // getDeniedLocalAccessRoleReason)
+  if (getLocalAccessDb(config, env)) roles.add(LOCAL_ACCESS_DB_GCP_ROLE);
+
+  const gcp = getLocalAccessConfig(config, env)?.gcp;
+  if (!gcp) return [...roles].sort();
+
   for (const preset of gcp.presets ?? []) {
     const presetRoles = LOCAL_ACCESS_GCP_PRESETS[preset];
     if (!presetRoles) {
@@ -176,6 +225,31 @@ export const getLocalAccessGcpEnvs = (
  */
 export const getLocalAccessGcpSecretName = (env: string) =>
   `LOCAL_ACCESS_GCP_${env.replace(/[^A-Za-z0-9]+/g, "_").toUpperCase()}_CREDENTIALS`;
+
+/**
+ * the envs of a component that declare read-only db access. Empty for
+ * components that do not deploy to google cloud run with `cloudSql`.
+ */
+export const getLocalAccessDbEnvs = (
+  config: Config,
+  componentName: string,
+): string[] =>
+  getAllEnvs(config, componentName).filter((env) => {
+    const deploy = getEnvConfig(config, componentName, env).deploy;
+    return (
+      isOfDeployType(deploy, "google-cloudrun") &&
+      !!deploy.cloudSql &&
+      !!getLocalAccessDb(config, env)
+    );
+  });
+
+/**
+ * name of the secret (stored under the `local` env of the component)
+ * holding the read-only db credentials of `env` (json: user, password,
+ * database, instanceConnectionName)
+ */
+export const getLocalAccessDbSecretName = (env: string) =>
+  `LOCAL_ACCESS_DB_${env.replace(/[^A-Za-z0-9]+/g, "_").toUpperCase()}_CREDENTIALS`;
 
 /**
  * the bindings to add and remove so that `current` matches `desired`.
