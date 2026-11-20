@@ -1,5 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { githubReviewDeployGuardJob } from "../github";
+import {
+  githubReviewDeployGuardJob,
+  githubReviewStopGuardJob,
+} from "../github";
 
 const HEAD = "4a60abe0000000000000000000000000000000aa";
 
@@ -114,5 +117,108 @@ describe("review deploy guard: label added while the CI runs", () => {
     mockGithub({ status: "completed", conclusion: "success" });
     await githubReviewDeployGuardJob();
     expect(await deployOutput()).toContain("deploy=false");
+  });
+});
+
+describe("review stop guard", () => {
+  let file: string;
+  beforeEach(() => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    process.env.GITHUB_REPOSITORY = "o/r";
+    process.env.GITHUB_TOKEN = "t";
+    process.env.CL_PR_NUMBER = "159";
+    process.env.GITHUB_EVENT_NAME = "pull_request";
+    file = `${process.env.TMPDIR ?? "/tmp"}/gh-stop-${process.pid}-${Math.random()}`;
+    process.env.GITHUB_OUTPUT = file;
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+  const stubFetch = (handler: (path: string) => any) =>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        handler(url.replace("https://api.github.com/repos/o/r/", "")),
+      ),
+    );
+  const ok = (data: unknown) => ({
+    ok: true,
+    status: 200,
+    json: async () => data,
+    text: async () => "",
+  });
+  const pull = (labels: string[]) =>
+    ok({
+      number: 159,
+      state: "open",
+      draft: false,
+      labels: labels.map((name) => ({ name })),
+      head: { sha: HEAD, ref: "feat/x" },
+    });
+  const out = async () => (await import("fs")).readFileSync(file, "utf8");
+
+  it("stop=true when the label lookup fails with HTTP 500", async () => {
+    stubFetch(() => ({ ok: false, status: 500, text: async () => "boom" }));
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
+  it("stop=false for a PR without marker and without evidence", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : p.includes("/statuses")
+          ? ok([])
+          : ok({ total_count: 0 }),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=false");
+  });
+  it("stop=true for a marked PR", async () => {
+    stubFetch(() => pull(["catladder:review-deployed"]));
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
+  it("stop=true for a legacy PR with a review app status", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : ok([{ context: "catladder review app" }]),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
+  it("stop=false for a PR with review (CI) runs but no deploy evidence", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : p.includes("/statuses")
+          ? ok([{ context: "catladder ✅" }])
+          : p.includes("catladder-deploy-review.yml")
+            ? ok({ total_count: 0 })
+            : ok({ total_count: 5 }),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=false");
+  });
+  it("stop=true for a legacy PR where the deploy workflow ran", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : p.includes("/statuses")
+          ? ok([])
+          : ok({ total_count: 1 }),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
+  it("stop=true when the legacy evidence lookup fails", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : { ok: false, status: 500, text: async () => "boom" },
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
   });
 });
