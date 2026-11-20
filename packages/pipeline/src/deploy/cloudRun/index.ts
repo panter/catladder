@@ -21,6 +21,9 @@ import {
   getServiceNameForEnvContext,
 } from "./utils/getServiceName";
 
+export { getServiceName } from "./utils/getServiceName";
+export { getCloudRunJobsWithNames } from "./createJobs/cloudRunJobs";
+
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 
 const getCloudSqlVariables = ({

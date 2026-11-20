@@ -191,6 +191,15 @@ export type CatladderJobCore<S = BaseStage> = {
   idToken?: boolean;
 
   /**
+   * the job attaches files to the repository's release of the current
+   * tag.
+   *
+   * Lowered by the github backend to `permissions: contents: write`.
+   * Ignored on gitlab.
+   */
+  releaseAssets?: boolean;
+
+  /**
    * variables to pass
    */
   variables: UnspecifiedEnvVars | undefined;

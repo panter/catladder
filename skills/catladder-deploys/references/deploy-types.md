@@ -55,6 +55,7 @@ resources with `yarn catladder project setup`; detect drift with
 - `access?: "public" | "restricted"` — npm access level, default `"public"`.
 - `registry?: string` — registry url, default `https://registry.npmjs.org/`.
 - `distTag?: string` — overrides the derived dist-tag.
+- `releaseAsset?: boolean` — github only, default `false`: tagged releases also `npm pack` the package and attach the tarball to the github release of the tag (replacing an asset of the same name, so reruns are fine). It is attached **before** the publish, so it exists even when the registry publish fails; consumers install it with `<pm> add https://github.com/<owner>/<repo>/releases/download/vX.Y.Z/<name>-X.Y.Z.tgz`. Grants the publish job `contents: write`.
 - Version/dist-tag derivation: tagged release (`prod`) → tag version under `latest`; branch/MR → `0.0.0-<branch-slug>-<sha>` under `canary` (branches `next`/`beta` publish under their own dist-tag).
 - Auth: the `NPM_TOKEN` secret (managed like any catladder secret), or — on github — **trusted publishing** with no stored token: register the package's trusted publisher on npmjs.com with the repo and the publishing **workflow filename** (`catladder-release.yml` for tagged releases). npm allows one trusted publisher per package, so canary publishes from the main/review workflows still need `NPM_TOKEN`. A set token always wins over OIDC.
 - Disable staging on the component (`env: { stage: false }`) so tagged releases publish directly.

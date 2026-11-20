@@ -23,6 +23,7 @@ export type DeployJobDefinition = Pick<
   | "timeout"
   | "pages"
   | "idToken"
+  | "releaseAssets"
 > & {
   cache?: CacheConfig[];
 };

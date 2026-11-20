@@ -663,6 +663,16 @@ export const config = {
   the GitLab vault, `project setup` refuses to provision it, because the
   key would become a CI variable visible to every job on every branch.
 
+Reading logs: `catladder logs <env>:<component>` prints the logs of the
+service, or of a job with `--job <name>` (optionally one `--execution <id>`).
+Further options: `--since 1h`, `--severity ERROR`, `--limit 200`, `--json`,
+and `--review-slug pr112` for review envs. The default window is one hour;
+entries are printed oldest first. `--json` writes only a JSON array to stdout.
+It uses the local access key
+through a temporary gcloud config, so your own `gcloud` login and
+`~/.config/gcloud` are not touched. It needs the `logs` preset, a
+provisioned key (`project setup`) and `catenv` having written it.
+
 What happens:
 
 - `catladder project setup` creates one service account per

@@ -4,8 +4,10 @@
  * version into the package's package.json and runs `npm publish`.
  */
 import { spawn } from "child_process";
-import { readFile, writeFile } from "fs/promises";
+import { mkdtemp, readdir, readFile, rm, writeFile } from "fs/promises";
+import { tmpdir } from "os";
 import { join, resolve } from "path";
+import { uploadGithubReleaseAsset } from "./githubReleaseAsset";
 import type { NpmPublishContext } from "./npmPublishPlan";
 import { computeNpmPublishPlan, slugifyRef } from "./npmPublishPlan";
 
@@ -17,6 +19,8 @@ export type NpmPublishJobOptions = {
   access?: string;
   registry?: string;
   distTag?: string;
+  /** also attach the packed tarball to the github release of the tag */
+  releaseAsset?: boolean;
 };
 
 /**
@@ -84,13 +88,14 @@ const hasOidcCredentials = () =>
   !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL &&
   !!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
 
-const npmPublish = (
+const runNpm = (
+  command: string,
   dir: string,
   npmrcPath: string | undefined,
   args: string[],
 ) =>
   new Promise<void>((resolvePromise, reject) => {
-    const child = spawn("npm", ["publish", ...args], {
+    const child = spawn("npm", [command, ...args], {
       cwd: dir,
       stdio: "inherit",
       env: {
@@ -102,9 +107,47 @@ const npmPublish = (
     child.on("exit", (code) =>
       code === 0
         ? resolvePromise()
-        : reject(new Error(`npm publish exited with ${code}`)),
+        : reject(new Error(`npm ${command} exited with ${code}`)),
     );
   });
+
+/**
+ * packs the package and attaches the tarball to the github release of
+ * the tag, so the version stays installable from github
+ * (`<pm> add <asset url>`) independently of the registry.
+ */
+const attachTarballToGithubRelease = async (dir: string, tag: string) => {
+  const env = process.env;
+  const token = env.CL_JOB_TOKEN || env.GITHUB_TOKEN;
+  if (!token || !env.GITHUB_REPOSITORY) {
+    throw new Error(
+      "releaseAsset needs the job token and GITHUB_REPOSITORY, but they are not set",
+    );
+  }
+  const packDir = await mkdtemp(join(tmpdir(), "catladder-npm-pack-"));
+  try {
+    await runNpm("pack", dir, undefined, [
+      "--pack-destination",
+      packDir,
+      "--workspaces=false",
+    ]);
+    const tarball = (await readdir(packDir)).find((f) => f.endsWith(".tgz"));
+    if (!tarball) {
+      throw new Error("npm pack did not produce a tarball");
+    }
+    const url = await uploadGithubReleaseAsset({
+      apiUrl: env.GITHUB_API_URL || "https://api.github.com",
+      repository: env.GITHUB_REPOSITORY,
+      tag,
+      token,
+      name: tarball,
+      content: await readFile(join(packDir, tarball)),
+    });
+    console.log(`attached ${tarball} to the github release ${tag}: ${url}`);
+  } finally {
+    await rm(packDir, { recursive: true, force: true });
+  }
+};
 
 export const npmPublishJob = async (options: NpmPublishJobOptions) => {
   const oidc = hasOidcCredentials();
@@ -114,13 +157,33 @@ export const npmPublishJob = async (options: NpmPublishJobOptions) => {
     );
   }
   const registry = options.registry ?? DEFAULT_NPM_REGISTRY;
+  const ciContext = readCiContext(options);
   const plan = computeNpmPublishPlan({
     envType: options.envType,
     distTagOverride: options.distTag,
-    ...readCiContext(options),
+    ...ciContext,
   });
 
   const name = await setPackageVersion(options.dir, plan.version);
+
+  // the release asset is independent of the registry: attach it first,
+  // so it exists even when the publish fails, and report its own
+  // failure only after the publish had its chance
+  let releaseAssetError: unknown;
+  if (
+    options.releaseAsset &&
+    ciContext.ciTag &&
+    process.env.GITHUB_ACTIONS === "true"
+  ) {
+    try {
+      await attachTarballToGithubRelease(options.dir, ciContext.ciTag);
+    } catch (error) {
+      releaseAssetError = error;
+      console.error(
+        `could not attach the tarball to the github release: ${error instanceof Error ? error.message : error}`,
+      );
+    }
+  }
   // with OIDC available npm mints its own short-lived credentials, and
   // an .npmrc referencing an unset ${NPM_TOKEN} would only get in the
   // way. A token, when present, still wins as the fallback.
@@ -134,7 +197,7 @@ export const npmPublishJob = async (options: NpmPublishJobOptions) => {
       npmrcPath ? "" : " via trusted publishing (OIDC)"
     }`,
   );
-  await npmPublish(options.dir, npmrcPath, [
+  await runNpm("publish", options.dir, npmrcPath, [
     "--tag",
     plan.distTag,
     "--access",
@@ -146,6 +209,9 @@ export const npmPublishJob = async (options: NpmPublishJobOptions) => {
     "--workspaces=false",
   ]);
   console.log(`published ${name}@${plan.version} 🚀`);
+  if (releaseAssetError) {
+    throw releaseAssetError;
+  }
 };
 
 /** parses the `catci publish npm --flag value ...` argument list */
@@ -162,6 +228,16 @@ export const parseNpmPublishArgs = (
   const { dir, access, registry } = options;
   const envType = options["env-type"];
   const distTag = options["dist-tag"];
+  const releaseAsset = options["release-asset"];
   if (!dir || !envType) return null;
-  return { dir, envType, access, registry, distTag };
+  if (releaseAsset !== undefined && !["true", "false"].includes(releaseAsset))
+    return null;
+  return {
+    dir,
+    envType,
+    access,
+    registry,
+    distTag,
+    ...(releaseAsset === "true" ? { releaseAsset: true } : {}),
+  };
 };

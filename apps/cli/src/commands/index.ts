@@ -21,6 +21,7 @@ export { commandSecretsList } from "./project/secrets/commandSecretsList";
 export { commandSecretsClearBackups } from "./project/commandSecretsClearBackups";
 export { commandSecretsSyncGithub } from "./project/commandSecretsSyncGithub";
 export { commandOpenLogs } from "./project/commandOpenLogs";
+export { commandLogs } from "./project/commandLogs";
 export { commandTriggerCronjobGeneral } from "./project/k8s/commandTriggerCronjob";
 export { commandRenewToken } from "./project/commandRenewToken";
 export { commandGetMyTotalWorktime } from "./project/commandGetMyTotalWorktime";

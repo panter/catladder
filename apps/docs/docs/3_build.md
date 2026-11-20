@@ -303,6 +303,29 @@ When set, the value applies to **all** artifact uploads, not only the build hand
 - Re-running a single job (or "Re-run failed jobs") after its inputs expired fails at the "Download artifacts" step. Re-run the whole workflow instead.
 - GitLab output is unchanged (its build artifacts expire after 1 day).
 
+## Main workflow concurrency (GitHub)
+
+By default, the generated GitHub main workflow has no concurrency block, so successive pushes can run concurrently. Opt in with `pipelines.github.concurrency.main`:
+
+```ts
+const config = {
+  pipelines: {
+    github: {
+      concurrency: {
+        main: { group: "catladder-main", cancelInProgress: false },
+      },
+    },
+  },
+  // ...
+};
+```
+
+When `main` is set (including `main: {}`), `group` defaults to `catladder-main` and `cancelInProgress` defaults to `false`. Runs in the group execute one at a time; GitHub can replace an older pending run with a newer one, so this does not guarantee every push runs.
+
+Set `cancelInProgress: true` to cancel the running main pipeline when a new push arrives. Cloud Run jobs and service updates already started still finish; the next run deploys the newer state. **This can also cancel an in-flight auto release job in the main workflow. Queueing (`false`) is the safe choice for projects with automatic releases.**
+
+This option affects only the GitHub main workflow. Review, release, stop and branch-trigger workflows keep their existing concurrency behavior, and GitLab output is unchanged.
+
 ## Workspace Builds
 
 Workspace builds are shared builds that are used by multiple components. There will be only one build job for all components that use the workspace build, but each component still will have its own docker build job.

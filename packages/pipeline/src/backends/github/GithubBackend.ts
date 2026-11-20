@@ -147,6 +147,32 @@ export class GithubBackend implements PipelineBackend {
     return new JobImagesPlan(this.type, config.images, registryImage);
   }
 
+  private getMainConcurrency(config: Config): GithubWorkflow["concurrency"] {
+    const main = getPipelineOptions(config, this.type).concurrency?.main;
+    if (main === undefined) return undefined;
+
+    if (
+      main.group !== undefined &&
+      (typeof main.group !== "string" || main.group.trim().length === 0)
+    ) {
+      throw new Error(
+        `pipelines.github.concurrency.main.group must be a non-empty string, got: ${main.group}`,
+      );
+    }
+    if (
+      main.cancelInProgress !== undefined &&
+      typeof main.cancelInProgress !== "boolean"
+    ) {
+      throw new Error(
+        `pipelines.github.concurrency.main.cancelInProgress must be a boolean, got: ${main.cancelInProgress}`,
+      );
+    }
+    return {
+      group: main.group ?? "catladder-main",
+      "cancel-in-progress": main.cancelInProgress ?? false,
+    };
+  }
+
   /**
    * all workflows keyed by file name, mainly for testing purposes
    */
@@ -156,6 +182,7 @@ export class GithubBackend implements PipelineBackend {
     scripts: GithubScriptFiles = new GithubScriptFiles(),
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
+    const mainConcurrency = this.getMainConcurrency(config);
 
     // per-pipeline-type variables (pipelines.github.runnerVariables);
     // workflow-level env, so job-level runnerVariables take precedence.
@@ -412,6 +439,9 @@ export class GithubBackend implements PipelineBackend {
         };
         const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
+          ...(trigger === "mainBranch" && mainConcurrency
+            ? { concurrency: mainConcurrency }
+            : {}),
           ...workflowPermissions(images),
           env: workflowEnv,
           // the review workflow additionally gets the aggregate job —

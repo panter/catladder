@@ -449,6 +449,14 @@ export type ConfigProps = {
   CustomEnvs: string;
 };
 
+/** Options for concurrency in a generated GitHub workflow. */
+export type GithubConcurrencyOptions = {
+  /** Concurrency group; defaults to "catladder-main". */
+  group?: string;
+  /** Cancel a running workflow when superseded; defaults to false. */
+  cancelInProgress?: boolean;
+};
+
 /**
  * per-pipeline-type options
  */
@@ -502,6 +510,15 @@ export type PipelineOutputOptions = {
    * @example 7
    */
   artifactRetentionDays?: number;
+
+  /**
+   * github only: opt-in concurrency for the main workflow only.
+   * When main is set, group defaults to "catladder-main" and
+   * cancelInProgress defaults to false. Without it, output is unchanged.
+   * Cancelling the main workflow also cancels any running auto release job;
+   * prefer cancelInProgress: false for projects with automatic releases.
+   */
+  concurrency?: { main?: GithubConcurrencyOptions };
 };
 
 /**
