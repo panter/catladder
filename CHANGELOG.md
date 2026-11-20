@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.15.0 (2026-11-20)
+
+### Minor Changes
+
+- npmPackage deploy: new `releaseAsset` option (github) attaches the packed tarball to the github release of the tag, so a release stays installable from github even when the npm publish fails.
+
 ## 5.14.0 (2026-11-12)
 
 ### Minor Changes
