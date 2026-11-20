@@ -173,6 +173,8 @@ in a root `.env`: scripts run from the repo root must load that file
 - `catladder-builds` — build-time vars (`jobVars`) and build config
 - `catladder-deploys` — runtime deploy config
 - `catladder-pipelines` — how the generated pipelines work
+- `catladder-github-runners` — third-party GitHub runners see every
+  secret of the jobs they run; keep sensitive envs on trusted runners
 - `catladder-cli` — non-interactive CLI usage and command reference
 - `catladder-migrate-ci-backend` — moving between CI backends (the vault
   is what blocks decommissioning the old one)

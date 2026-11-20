@@ -457,6 +457,86 @@ export type GithubConcurrencyOptions = {
   cancelInProgress?: boolean;
 };
 
+/** vCPU sizes of blacksmith's x64 ubuntu runners */
+export type BlacksmithRunnerVcpu = 2 | 4 | 8 | 16 | 32;
+
+/**
+ * celesto runner sizes: micro (1 vCPU / 2 GB), small (1 / 4), standard
+ * (2 / 4), memory (2 / 8), large (4 / 16), xl (8 / 32)
+ */
+export type CelestoRunnerSize =
+  | "micro"
+  | "small"
+  | "standard"
+  | "memory"
+  | "large"
+  | "xl";
+
+/**
+ * a github runner: a literal `runs-on` label (e.g. "ubuntu-latest", a
+ * larger github runner or a self-hosted label), or a third-party runner
+ * provider whose label catladder derives.
+ *
+ * Third-party runners need the provider's GitHub App installed on the
+ * repository — see the catladder-pipelines skill.
+ */
+export type GithubRunner =
+  | string
+  | {
+      /** blacksmith.sh (x64 ubuntu 24.04) */
+      provider: "blacksmith";
+      /** @default 2 */
+      vcpu?: BlacksmithRunnerVcpu;
+    }
+  | {
+      /** celesto.ai/ci (x64 ubuntu 24.04) */
+      provider: "celesto";
+      /** @default "memory" (2 vCPU / 8 GB, like github's ubuntu-latest) */
+      size?: CelestoRunnerSize;
+    };
+
+export type GithubRunnerOptions = {
+  /**
+   * runner of all component and workspace jobs (build, test, lint,
+   * docker, deploy, …)
+   *
+   * @default "ubuntu-latest"
+   */
+  default?: GithubRunner;
+  /**
+   * runner of catladder's housekeeping jobs (image check, ✅ aggregate
+   * checks, review deploy triggers, release jobs).
+   *
+   * @default the provider's small size (blacksmith 2 vCPU, celesto
+   * "standard"), or `default` when that is a literal label
+   */
+  light?: GithubRunner;
+  /**
+   * per-job runners, keyed by the job name without emoji (`test`,
+   * `lint`, `app`, `docker`, `deploy`, `verify`, `audit`, `stop`, …),
+   * optionally scoped to a component or workspace: `"api/test"`.
+   * The scoped key wins over the plain one.
+   *
+   * @example { test: { provider: "blacksmith", vcpu: 4 } }
+   */
+  jobs?: Record<string, GithubRunner>;
+  /**
+   * per-environment runners for all jobs of that environment, keyed by
+   * env name. Wins over `jobs` and `default`: it exists to keep the
+   * jobs that see an environment's secrets (typically `prod`) on
+   * runners you trust, e.g. github's own `ubuntu-latest`.
+   *
+   * @example { prod: "ubuntu-latest" }
+   */
+  environments?: Record<string, GithubRunner>;
+};
+
+/**
+ * `pipelines.github.runner`: one runner for every job, or default /
+ * light / per-job runners
+ */
+export type GithubRunnerConfig = GithubRunner | GithubRunnerOptions;
+
 /**
  * per-pipeline-type options
  */
@@ -519,6 +599,20 @@ export type PipelineOutputOptions = {
    * prefer cancelInProgress: false for projects with automatic releases.
    */
   concurrency?: { main?: GithubConcurrencyOptions };
+
+  /**
+   * github only: the runners the generated jobs run on (`runs-on`).
+   * Without it every job runs on github's hosted `ubuntu-latest`.
+   *
+   * Third-party runners (blacksmith, celesto) are much cheaper per
+   * minute, but CI jobs see secrets and source code: choosing one is a
+   * data-protection decision (provider, region, subprocessors) — see the
+   * catladder-pipelines skill.
+   *
+   * @example { provider: "blacksmith" }
+   * @example { default: { provider: "celesto", size: "memory" }, jobs: { test: { provider: "celesto", size: "large" } } }
+   */
+  runner?: GithubRunnerConfig;
 };
 
 /**

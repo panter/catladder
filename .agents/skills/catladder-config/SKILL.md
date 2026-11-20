@@ -120,7 +120,12 @@ Key concepts:
   group `catladder-main`, cancellation `false`). Main has no concurrency
   block by default. Queueing (`false`) is the safe choice with automatic
   releases; `true` can cancel an in-flight auto release. See the
-  `catladder-pipelines` skill for the example and deployment caveat).
+  `catladder-pipelines` skill for the example and deployment caveat;
+  and `runner` — GitHub only, the `runs-on` of the generated jobs:
+  github's `ubuntu-latest` by default, or a cheaper provider like
+  Blacksmith or Celesto, per job and per environment. See the
+  `catladder-github-runners` skill — choosing a provider is a
+  data-protection decision).
 - **Package manager**: yarn and pnpm are supported and autodetected
   (from the `packageManager` field in package.json or the lockfile;
   yarn is the fallback). `packageManager: "pnpm" | "yarn"` at the top
@@ -173,6 +178,8 @@ escape hatches to shrink over time, not accumulate.
 - `catladder-secrets` — env vars and secret management
 - `catladder-releases` — releasing (semantic-release / changesets)
 - `catladder-pipelines` — how the generated pipelines work, debugging CI
+- `catladder-github-runners` — which machines GitHub jobs run on
+  (`pipelines.github.runner`, Blacksmith / Celesto, Actions costs)
 - `catladder-cli` — non-interactive CLI usage and command reference
 - `catladder-migrate-ci-backend` — moving a project between GitLab CI
   and GitHub Actions
