@@ -97,6 +97,32 @@ describe("slugifyRef", () => {
 });
 
 describe("parseNpmPublishArgs", () => {
+  it("parses --release-asset true", () => {
+    expect(
+      parseNpmPublishArgs([
+        "--dir",
+        "apps/cli",
+        "--env-type",
+        "prod",
+        "--release-asset",
+        "true",
+      ]),
+    ).toMatchObject({ dir: "apps/cli", envType: "prod", releaseAsset: true });
+  });
+
+  it("rejects an invalid --release-asset value", () => {
+    expect(
+      parseNpmPublishArgs([
+        "--dir",
+        "apps/cli",
+        "--env-type",
+        "prod",
+        "--release-asset",
+        "yes",
+      ]),
+    ).toBeNull();
+  });
+
   it("parses the generated flag list", () => {
     expect(
       parseNpmPublishArgs([

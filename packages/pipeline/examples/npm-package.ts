@@ -11,6 +11,9 @@ import type { Config } from "../src";
  *
  * npm packages have no staging, so the stage environment is disabled
  * and tagged releases publish directly.
+ *
+ * `releaseAsset` (github) additionally attaches the packed tarball to
+ * the github release of the tag.
  */
 const config = {
   appName: "test-app",
@@ -29,6 +32,7 @@ const config = {
       },
       deploy: {
         type: "npmPackage",
+        releaseAsset: true,
       },
     },
   },

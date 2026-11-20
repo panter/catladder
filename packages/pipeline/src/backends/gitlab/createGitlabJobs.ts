@@ -131,6 +131,8 @@ export const makeGitlabJob = (
     // no counterpart, and anything left in `rest` lands in the job yaml
     // verbatim ("config contains unknown keys: idtoken")
     idToken: _idToken,
+    // same for the github-only release asset grant
+    releaseAssets: _releaseAssets,
     ...rest
   } = job;
 

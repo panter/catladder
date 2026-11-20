@@ -461,13 +461,15 @@ export const makeGithubJob = (
     ...(pagesPublishDir ? { pages: "write", "id-token": "write" } : {}),
     ...(job.idToken ? { "id-token": "write" } : {}),
   };
-  const permissions = Object.keys(specialPermissions).length
-    ? {
-        contents: "read",
-        ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
-        ...specialPermissions,
-      }
-    : undefined;
+  const permissions =
+    Object.keys(specialPermissions).length || job.releaseAssets
+      ? {
+          // write to attach files to the release of the tag
+          contents: job.releaseAssets ? "write" : "read",
+          ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
+          ...specialPermissions,
+        }
+      : undefined;
 
   const githubJob: GithubJob = {
     name: githubJobName(context, job.name),
