@@ -1,6 +1,6 @@
 ---
 name: catladder-secrets
-description: Managing environment variables and secrets in a catladder project. Use when adding or changing env vars in catladder.ts (vars.public / vars.secret), when a secret value must be set, rotated or checked, when secrets need syncing to GitHub, or when local .env / direnv environment questions come up. Triggers on "env var", "secret", "vars", "catenv", ".env", "config-secrets", "secrets-set", "secrets-list", "rotate a secret", "set a secret".
+description: Managing environment variables and secrets in a catladder project. Use when adding or changing env vars in catladder.ts (vars.public / vars.secret), when a secret value must be set, rotated or checked, when secrets need migrating between vaults or syncing to GitHub, or when local .env / direnv environment questions come up. Triggers on "env var", "secret", "vars", "catenv", ".env", "config-secrets", "secrets-set", "secrets-list", "secrets-migrate", "switch vault", "rotate a secret", "set a secret".
 ---
 
 # Env vars and secrets with catladder
@@ -85,9 +85,58 @@ Humans may instead use the interactive editor flow
 (`project config-secrets`, opens `$EDITOR`); as an agent, use the
 commands above.
 
-All of these write to the secrets vault (the source of truth) and
+The editing commands above write to the secrets vault (the source of truth) and
 automatically mirror to the enabled CI backends — which vault is
 configured makes no difference to the commands.
+
+## Migrating secrets between vaults
+
+`project secrets-migrate [env:component] --to <vault>` copies declared
+secrets between `gitlab` and `bitwarden`. Omit the scope for all
+environments/components, or use the scopes above; `--key KEY1,KEY2`
+narrows the selection. `--to` is required; `--from` defaults to the
+configured vault. For Bitwarden, select collections with
+`--from-collection` / `--to-collection` (the configured collection when
+the vault type matches, otherwise `catladder`). Use explicit `--from
+bitwarden` with `--from-collection` when selecting a source collection.
+Source and target must identify different vaults/collections.
+
+```sh
+# preview names and counts; no writes or confirmation
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --dry-run
+# non-interactive copy after reviewing the plan
+pnpm catladder project secrets-migrate --to bitwarden --to-collection catladder --yes
+# copy selected keys between Bitwarden collections
+pnpm catladder project secrets-migrate dev:web --from bitwarden --from-collection old --to bitwarden --to-collection new --key API_KEY --yes
+```
+
+Unset/empty source values and placeholders are skipped; equal target
+values are left alone. Differing target values are conflicts unless
+`--overwrite` is supplied, which replaces them with backups. Without
+`--yes`, pending writes require confirmation. `--dry-run` only prints
+the plan; migration output shows names/counts, never secret values.
+Writes are verified by re-reading the target vault. Failed writes,
+verification failures or remaining conflicts make the migration exit
+non-zero.
+
+Migration never modifies the source, changes `catladder.ts`, or mirrors
+to CI. Existing CI variables remain untouched (the GitLab vault itself
+stores secrets in project variables, so targeting it necessarily writes
+those vault entries).
+
+To switch vaults:
+
+1. Preview and run migration while `secrets.vault` still points to the
+   old vault. Resolve conflicts/failures before continuing.
+2. Change `secrets.vault` in `catladder.ts` to the destination (including
+   its Bitwarden collection), then run `pnpm catenv` and commit the config
+   and generated files.
+3. Re-run `project setup` for provisioned secrets as described below;
+   run `project secrets-sync-github` if GitHub environment secrets need
+   syncing. These are separate operations from migration.
+4. Keep the old vault read-only for rollback; migration does not delete
+   or disable it. Switching the config back restores the old source of
+   truth, whose values may become stale after writes to the new vault.
 
 ## Provisioned secrets
 
@@ -104,6 +153,50 @@ created and the old one revoked). That is also the answer whenever they
 are missing somewhere — after switching `secrets.vault`, for instance:
 a `secrets-pull`/`secrets-push` round trip does not carry hidden keys
 over, so re-run `project setup` to provision them into the new vault.
+
+## Switching vaults
+
+To move the declared secrets from one vault to another (e.g. gitlab →
+bitwarden), use `project secrets-migrate`. It copies values, never
+modifies the source, never mirrors to CI backends, and never prints
+values (names and counts only).
+
+1. Make sure the target vault is usable (e.g. bitwarden login). Do **not**
+   change `secrets.vault` yet: `--from` defaults to the configured vault,
+   `--to` names the target (`gitlab` or `bitwarden`; bitwarden takes
+   `--to-collection` / `--from-collection`, default the configured
+   collection, else `catladder`). `--from-collection` also works when
+   `--from` is omitted.
+2. Preview: `yarn catladder project secrets-migrate --to bitwarden --dry-run`
+   (scope and `--key KEY1,KEY2` work as in the other secrets commands,
+   e.g. `dev:web`). Nothing is written.
+3. Run it: `yarn catladder project secrets-migrate --to bitwarden`
+   (`--yes` skips the confirmation, needed when non-interactive). Written
+   values are read back from the target and verified.
+4. Set `secrets.vault` in `catladder.ts` to the new vault, run
+   `yarn catenv` and commit.
+5. Keep the old vault untouched for a while: it is the rollback.
+
+Details to know:
+
+- Re-running is idempotent: identical values are skipped, unset
+  (empty / "FILL ME") source values are skipped.
+- A value that already exists in the target with a different value is a
+  **conflict**: it is not overwritten, and the command exits non-zero.
+  This also returns non-zero in `--dry-run`. Re-run with `--overwrite`
+  to replace it (the target keeps a backup copy
+  of the old value). Write or verification failures also exit non-zero;
+  other components are still migrated.
+- Only declared secrets are migrated. The hidden provisioned keys
+  (gcloud deploy key, kube credentials) and `localAccess` service account
+  keys are **not**: re-run `yarn catladder project setup` afterwards to
+  provision them into the new vault.
+- Migrating changes only the vault. Values in the CI backends are
+  unchanged, so no redeploy is needed for the migration itself; redeploy
+  (or `secrets-sync-github`) only after you actually change a value.
+- Source and target must differ; the command refuses otherwise.
+- Vault failures report entry names and omit backend diagnostics, which may
+  contain values. Check vault access separately when a read or write fails.
 
 ## GitHub pipelines
 
