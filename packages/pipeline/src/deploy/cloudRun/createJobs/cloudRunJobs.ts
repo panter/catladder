@@ -40,7 +40,7 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
         project,
         region,
         ...deployArgs
-      } = getCommonDeployArgs(context);
+      } = getCommonDeployArgs(context, job.runtimeServiceAccount);
       const commonDeployArgsString = createArgsString(
         {
           command: `"${commandArray.join(",")}"`,
