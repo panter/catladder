@@ -15,6 +15,7 @@ import {
   writeSecretsCache,
 } from "./cache";
 import { GitlabVault } from "./GitlabVault";
+import { GoogleSecretManagerVault } from "./GoogleSecretManagerVault";
 import type { SecretsMode, SecretsVault, WriteSecretsOptions } from "./types";
 
 /**
@@ -70,6 +71,8 @@ export class VaultManager {
           (this.mode === "auto" || this.mode === "refresh") &&
             (this.io?.interactive ?? true),
         );
+      case "google-secret-manager":
+        return new GoogleSecretManagerVault(this.config, vaultConfig);
     }
   }
 

@@ -79,6 +79,8 @@ const config = {
     // { type: "bitwarden", collection: "catladder" }: one yaml note per
     // env/component, for projects that need a real secret manager or that
     // have no gitlab project at all
+    // { type: "google-secret-manager" }: one Google Secret Manager secret
+    // per value, see below
     vault: { type: "bitwarden" },
   },
 } satisfies Config;
@@ -94,6 +96,34 @@ GitHub environment per catladder env). After changing secrets, run
 `yarn catladder project secrets-sync-github`.
 
 :::
+
+#### Google Secret Manager vault
+
+```ts title="catladder.ts"
+const config = {
+  secrets: {
+    vault: {
+      type: "google-secret-manager",
+      // GCP project holding the secrets. Defaults to the single projectId
+      // shared by all google-cloudrun deploys; required if there is none
+      // or several distinct ones
+      project: "my-gcp-project",
+      // prefix of all secret ids, default "catladder"
+      prefix: "catladder",
+    },
+  },
+} satisfies Config;
+```
+
+- **Needs `gcloud`**: catladder shells out to the `gcloud` CLI, so run `gcloud auth login` first. It never prompts; an auth failure is reported with a hint.
+- **Naming**: one secret per value, with the id `<prefix>-<customer>-<app>-<env>-<component>-<KEY>`. Ids may only contain `[A-Za-z0-9_-]` (max. 255 characters), catladder fails with a clear error otherwise.
+- **Labels**: each secret gets the labels `catladder-env`, `catladder-component` and `catladder-app` (sanitized to GCP label rules: lowercase, max. 63 characters). They are used to list and map secrets back to their env/component.
+- **Setup and doctor**: `catladder project setup` enables `secretmanager.googleapis.com` in the vault project, `catladder project doctor` checks that it is enabled and that you can list secrets.
+- **IAM**: reading needs `roles/secretmanager.secretAccessor` (plus permission to list secrets), writing needs `roles/secretmanager.admin`. To scope access to catladder secrets, use IAM conditions on the secret **name prefix** (`resource.name.startsWith(...)`) rather than on labels, as labels are not available to IAM conditions.
+- **Value size**: max. 64 KiB per secret.
+- **Number of calls**: reading performs one `gcloud secrets list` plus one `versions access` call per secret, so it gets slower with many secrets (values are cached locally, see `--vault-mode`).
+- **Backups**: every write adds a new secret _version_; Secret Manager retains the previous versions. catladder never disables or destroys versions, also not with `backup: false` — the backup option has no effect for this vault.
+- **No localAccess**: `localAccess` cannot be used with this vault, `project setup` and `project doctor` refuse it, because the service account key would be the vault's own bootstrap secret.
 
 ### The interactive editor
 

@@ -14,6 +14,7 @@ import { setupTopic } from "./setupTopic";
 import { setupAgents } from "./setupAgents";
 import { setupGithub } from "./setupGithub";
 import { logSection } from "./logSection";
+import { setupSecretManager } from "./setupSecretManager";
 import { ensureGcloudProjectNumbers } from "./ensureGcloudProjectNumbers";
 
 export const setupProject = async (
@@ -49,6 +50,8 @@ export const setupProject = async (
       await setupTopic(instance);
     }
     if (config) {
+      // before any secret is written
+      await setupSecretManager(instance, config);
       await setupGithub(instance, config);
     }
   });
