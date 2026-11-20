@@ -58,6 +58,9 @@ const config: Config = {
       },
       deploy: {
         type: "npmPackage",
+        // tagged releases also attach the tarball to the github
+        // release, installable from there while npm is unavailable
+        releaseAsset: true,
       },
     },
     docs: {

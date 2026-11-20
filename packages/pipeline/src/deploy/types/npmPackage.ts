@@ -38,4 +38,18 @@ export type DeployConfigNpmPackage = {
    * derivation rules on {@link DeployConfigNpmPackage})
    */
   distTag?: string;
+
+  /**
+   * github only: tagged releases also attach the packed tarball
+   * (`npm pack`) to the github release of the tag. The version then
+   * stays installable straight from github
+   * (`<pm> add https://github.com/<owner>/<repo>/releases/download/vX.Y.Z/<name>-X.Y.Z.tgz`),
+   * independently of the registry — the tarball is attached before the
+   * publish and survives a failing one.
+   *
+   * Grants the tagged-release publish job `contents: write`. Ignored on
+   * gitlab and for canary publishes.
+   * @default false
+   */
+  releaseAsset?: boolean;
 } & DeployConfigBase;

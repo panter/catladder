@@ -93,12 +93,14 @@ usage:
       dispatches always do, label events and ci dispatches follow the
       policy; all need the PR open and its CI green
 
-  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]
+  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>] [--release-asset true]
       npmPackage deploy job: derives version + dist-tag from the
       pipeline trigger (tagged release -> tag version @latest; branch/MR
       -> 0.0.0-<slug>-<sha> canary, with next/beta branches publishing
       under their own dist-tag), stamps package.json and runs npm
-      publish (authenticated via the NPM_TOKEN secret)
+      publish (authenticated via the NPM_TOKEN secret). With
+      --release-asset true a tagged release on github also attaches
+      the packed tarball to the github release of the tag
 `;
 
 const fail = (message: string): never => {

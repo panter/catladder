@@ -822,7 +822,7 @@ catladder-release.yml:
         name: prod-lib
         url: \${{ steps.main.outputs.url }}
       permissions:
-        contents: read
+        contents: write
         packages: read
         id-token: write
       env:
@@ -1447,7 +1447,7 @@ export ROOT_URL_INTERNAL="https://unknown-host.example.com"
 export NPM_TOKEN="$CL_prod_lib_NPM_TOKEN"
 export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"NPM_TOKEN\\"]"
 collapseable_section_end "injectvars"
-node .catladder-generated/catci/index.js publish npm --dir lib --env-type prod
+node .catladder-generated/catci/index.js publish npm --dir lib --env-type prod --release-asset true
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 "
 `;
@@ -2331,7 +2331,7 @@ create release:
     - export NPM_TOKEN="$CL_prod_lib_NPM_TOKEN"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"NPM_TOKEN\\"]"
     - collapseable_section_end "injectvars"
-    - node .catladder-generated/catci/index.js publish npm --dir lib --env-type prod
+    - node .catladder-generated/catci/index.js publish npm --dir lib --env-type prod --release-asset true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/lib

@@ -40,5 +40,5 @@ export ROOT_URL_INTERNAL="https://unknown-host.example.com"
 export NPM_TOKEN="$CL_prod_cli_NPM_TOKEN"
 export _ALL_ENV_VAR_KEYS="[\"ENV_SHORT\",\"APP_DIR\",\"ENV_TYPE\",\"BUILD_INFO_BUILD_ID\",\"BUILD_INFO_BUILD_TIME\",\"BUILD_INFO_CURRENT_VERSION\",\"HOSTNAME\",\"ROOT_URL\",\"HOSTNAME_INTERNAL\",\"ROOT_URL_INTERNAL\",\"NPM_TOKEN\"]"
 collapseable_section_end "injectvars"
-node .catladder-generated/catci/index.js publish npm --dir apps/cli --env-type prod
+node .catladder-generated/catci/index.js publish npm --dir apps/cli --env-type prod --release-asset true
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"

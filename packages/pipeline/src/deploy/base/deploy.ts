@@ -141,6 +141,7 @@ export class DeployJob extends CatladderJob {
       services: jobDefinition.services,
       pages: jobDefinition.pages,
       idToken: jobDefinition.idToken,
+      releaseAssets: jobDefinition.releaseAssets,
       allow_failure: jobDefinition.allow_failure ?? deployConfig?.allowFailure,
       envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
