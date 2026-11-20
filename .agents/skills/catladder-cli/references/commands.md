@@ -81,6 +81,19 @@ trigger cronjob
 - `namespace` (positional): kubernetes namespace
 - `--job-name <value>`: Which cronjob?
 
+## `catladder logs [envComponent]`
+
+print the Cloud Run logs of a service or job (read-only, with the local access key, no login needed)
+
+- `envComponent` (positional): environment:component
+- `--job <value>`: read the logs of this cloud run job instead of the service
+- `--execution <value>`: only this job execution (id like r8hjv, or the full name); needs --job
+- `--since <value>`: how far back to look, e.g. 30m, 1h, 2d (default: "1h")
+- `--severity <value>`: minimum severity, e.g. ERROR
+- `--limit <value>`: maximum number of entries (the newest ones) (default: 200)
+- `--review-slug <value>`: review app of a review env, e.g. pr112 or mr12
+- `--json`: print the log entries as a json array (default: false)
+
 ## `catladder mr pin [mr]`
 
 pin the review apps of a merge request (disable their auto-stop) by adding the pin label; merging or closing the MR still stops them
