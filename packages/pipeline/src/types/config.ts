@@ -117,8 +117,24 @@ export type EnvVars = {
 
 export type SecretVarKind = "secret" | "variable";
 
+/**
+ * where a secret is consumed:
+ * - runtime: by the running application
+ * - build: by the build job
+ * - deploy: by the deploy job
+ * - jobs: by other jobs (test, verify, ...)
+ * - local: by local development (direnv)
+ */
+export type SecretScope = "runtime" | "build" | "deploy" | "jobs" | "local";
+
 export type SecretVarConfig = {
   kind?: SecretVarKind;
+  /**
+   * where the secret is consumed. Default (unset): all scopes.
+   * Runtime-only secrets (only `runtime` and/or `local`) need no copy in
+   * CI variables, provided the deploy delivers them outside of CI.
+   */
+  scopes?: SecretScope[];
   /** hidden env vars are not shown in config-secrets */
   hidden?: boolean;
 };

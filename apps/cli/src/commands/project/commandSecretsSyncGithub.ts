@@ -61,13 +61,23 @@ export const commandSecretsSyncGithub = defineCommand({
     }
 
     const envFilter = (await ctx.get("env"))?.split(",").map((e) => e.trim());
-    const { secrets, missing } = await collectSecretsFromVault(ctx, envFilter);
+    const { secrets, missing, skipped } = await collectSecretsFromVault(
+      ctx,
+      envFilter,
+    );
 
     if (missing.length > 0) {
       ctx.log(
         `⚠️ ${missing.length} secrets are not set in the vault and will be skipped:`,
       );
       missing.forEach((name) => ctx.log(`  - ${name}`));
+      ctx.log("");
+    }
+    if (skipped.length > 0) {
+      ctx.log(
+        `⏭️ skipped ${skipped.length} runtime-only secret(s), not needed in CI:`,
+      );
+      skipped.forEach((name) => ctx.log(`  - ${name}`));
       ctx.log("");
     }
     if (secrets.length === 0) {
