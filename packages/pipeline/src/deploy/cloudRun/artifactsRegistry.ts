@@ -5,6 +5,10 @@ import { allowFailureInScripts } from "../../utils/gitlab";
 import { isOfDeployType } from "../types";
 import { removeFirstLinesFromCommandOutput } from "./utils/removeFirstLinesFromCommandOutput";
 
+// Cache images are shared across environments; overlapping builds can still
+// need a recently pushed cache. Deleting one costs a cache miss.
+export const BUILD_CACHE_IMAGES_TO_KEEP = 3;
+
 export const getArtifactsRegistryHost = (context: ComponentContext) => {
   if (!isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     // should not happen
@@ -111,7 +115,7 @@ export const getDeleteUnusedImagesCommands = (
 
   return [
     ...getDeleteImageCommands(fullImageName, keep),
-    ...getDeleteImageCommands(buildCacheImageName, 1),
+    ...getDeleteImageCommands(buildCacheImageName, BUILD_CACHE_IMAGES_TO_KEEP),
     // because a recent version of catladder had no review-slug in the image name, we have to delete those as well
     // we can later remove this line in some months
 
