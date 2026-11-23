@@ -10,7 +10,9 @@ In a normal checkout, use the committed `city-beads` skill and its MCP tools or
 first browser login when requested. If the `city-beads` MCP server is not
 connected or asks for authentication, use the CLI instead of asking the person
 to run `/mcp`. Do not run `bd prime`, initialize a store,
-or synchronize an old store. A person approves work in the dashboard; a session
+or synchronize an old store. Person-ordered API creations count as approved (ADR 0017 A), except `idee` or
+`needs-refinement`; file only requested work and label agent ideas `idee`. Refined
+work needs fresh explicit approval. A person approves other work in the dashboard; a session
 approves only on the person's explicit words with `city-bd approve <id> "<their words>"`.
 
 A routed Gas City worker on colab follows its startup claim protocol and uses
