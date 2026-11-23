@@ -326,6 +326,44 @@ Set `cancelInProgress: true` to cancel the running main pipeline when a new push
 
 This option affects only the GitHub main workflow. Review, release, stop and branch-trigger workflows keep their existing concurrency behavior, and GitLab output is unchanged.
 
+## Runners (GitHub)
+
+Every generated GitHub job runs on github's hosted `ubuntu-latest` by default. `pipelines.github.runner` changes the `runs-on` of the generated jobs — to a larger github runner, a self-hosted label, or a third-party runner provider that is much cheaper per minute:
+
+```ts
+const config = {
+  pipelines: {
+    github: {
+      runner: {
+        // build, test, lint, docker, deploy, … of all components
+        default: { provider: "celesto", size: "memory" },
+        // per job (name without emoji), optionally "<component>/<job>"
+        jobs: { test: { provider: "celesto", size: "large" } },
+        // per environment, wins over jobs and default
+        environments: { prod: "ubuntu-latest" },
+        // catladder's housekeeping jobs (image check, ✅ checks, release)
+        light: { provider: "celesto", size: "standard" },
+      },
+    },
+  },
+  // ...
+};
+```
+
+A plain value is the shorthand for `default`: `runner: { provider: "blacksmith" }` or `runner: "my-self-hosted-label"`.
+
+| value                               | `runs-on`                                                            |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| string                              | as is                                                                |
+| `{ provider: "blacksmith", vcpu? }` | `blacksmith-<vcpu>vcpu-ubuntu-2404` (2 default, 4, 8, 16, 32)        |
+| `{ provider: "celesto", size? }`    | `celesto-<size>` (micro, small, standard, memory default, large, xl) |
+
+`light` defaults to the provider's small size (blacksmith 2 vCPU, celesto `standard`), or to `default` when that is a literal label.
+
+**Runners see every secret of the jobs they run.** GitHub delivers secrets and env vars decrypted to the runner machine, so choosing a provider is a data-protection decision (region, subprocessors, the customer's DPA). Keep the environments whose secrets matter on github's runners with `environments`, and set `light` too if the release job's credentials matter. The provider's GitHub App must be installed on the repository. The `catladder-github-runners` agent skill has the full setup, cost estimation and checklist.
+
+GitLab output is unchanged.
+
 ## Workspace Builds
 
 Workspace builds are shared builds that are used by multiple components. There will be only one build job for all components that use the workspace build, but each component still will have its own docker build job.

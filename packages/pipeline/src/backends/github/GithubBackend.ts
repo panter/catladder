@@ -33,6 +33,7 @@ import {
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
 import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
+import { GithubRunners } from "./runners";
 import {
   getGatedReviewDeliveryJobIds,
   getInRunDeployCondition,
@@ -180,6 +181,12 @@ export class GithubBackend implements PipelineBackend {
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
     const mainConcurrency = this.getMainConcurrency(config);
+    const runners = new GithubRunners(
+      getPipelineOptions(config, this.type).runner,
+    );
+    // ids of component/workspace jobs; every other job is catladder
+    // housekeeping and runs on the light runner
+    const contextJobIds = new Set<string>();
 
     // per-pipeline-type variables (pipelines.github.runnerVariables);
     // workflow-level env, so job-level runnerVariables take precedence.
@@ -241,6 +248,12 @@ export class GithubBackend implements PipelineBackend {
               secretKinds,
               getPipelineOptions(config, this.type).artifactRetentionDays,
             );
+            githubJob["runs-on"] = runners.forJob(
+              context.name,
+              context.env,
+              job.name,
+            );
+            contextJobIds.add(id);
             triggerJobs.set(id, { githubJob, job, context });
           }),
       );
@@ -548,6 +561,14 @@ export class GithubBackend implements PipelineBackend {
           ),
         ),
       };
+    }
+
+    for (const workflow of Object.values(workflows)) {
+      for (const [id, job] of Object.entries(workflow.jobs)) {
+        if (!contextJobIds.has(id)) {
+          job["runs-on"] = runners.light;
+        }
+      }
     }
 
     return workflows;

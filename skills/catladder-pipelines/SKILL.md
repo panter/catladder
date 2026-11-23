@@ -288,6 +288,14 @@ cleaned up. Re-running a single job after its upstream artifacts
 expired fails at "Download artifacts"; re-run the whole workflow
 instead. GitLab output is unchanged.
 
+## Runners (GitHub)
+
+All generated GitHub jobs run on `ubuntu-latest` unless
+`pipelines.github.runner` picks another runner — per job, per
+environment, or a third-party provider (Blacksmith, Celesto) to cut the
+Actions bill. Runners see every secret a job uses; see the
+`catladder-github-runners` skill before switching.
+
 ## Caching
 
 Cache configuration is generated per build type. **yarn** node builds
@@ -328,6 +336,8 @@ Useful CLI commands (see the `catladder-cli` skill for invocation):
 - `catladder-deploys` — deploy jobs, environments and review apps
 - `catladder-releases` — the `taggedRelease` flow and security-audit gate
 - `catladder-secrets` — env vars and secret management
+- `catladder-github-runners` — the machines GitHub jobs run on
+  (`pipelines.github.runner`), Actions costs, Blacksmith / Celesto
 - `catladder-cli` — non-interactive CLI usage and command reference
 - `catladder-migrate-ci-backend` — moving between GitLab CI and GitHub
   Actions (running both in parallel, then cutting over)
