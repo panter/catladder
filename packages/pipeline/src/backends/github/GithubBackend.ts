@@ -38,11 +38,14 @@ import {
   getGatedReviewDeliveryJobIds,
   getInRunDeployCondition,
   makeReviewAppAggregateJob,
+  makeReviewDeployMarkerJob,
+  REVIEW_DEPLOY_MARKER_JOB_ID,
   makeReviewDeployTriggerJob,
   makeReviewDeployWorkflow,
   REVIEW_DEPLOY_WORKFLOW_FILE,
   withDraftsSkipped,
   withInRunCondition,
+  withReviewStopGuard,
   withReviewStopSwitch,
 } from "./reviewDeployWorkflow";
 
@@ -295,7 +298,14 @@ export class GithubBackend implements PipelineBackend {
             for (const id of deliveryIds) {
               const entry = triggerJobs.get(id)!;
               entry.githubJob = withInRunCondition(
-                entry.githubJob,
+                {
+                  ...entry.githubJob,
+                  // a deploy never starts unmarked
+                  needs: [
+                    REVIEW_DEPLOY_MARKER_JOB_ID,
+                    ...(entry.githubJob.needs ?? []),
+                  ],
+                },
                 inRunCondition,
               );
             }
@@ -420,16 +430,26 @@ export class GithubBackend implements PipelineBackend {
       }
 
       if (Object.keys(jobs).length > 0) {
+        const markerJobs: Record<string, GithubJob> =
+          trigger === "mr" && inRunCondition && inRunDeliveryIds.length > 0
+            ? {
+                [REVIEW_DEPLOY_MARKER_JOB_ID]:
+                  makeReviewDeployMarkerJob(inRunCondition),
+              }
+            : {};
         // one bundled image job, only where a job runs in a custom image
         // (the main workflow also ensures the release image, which the
         // create-release and release-on-green workflows rely on)
-        const workflowJobs = withEnsureImages(
-          images,
-          jobs,
-          trigger === "mainBranch"
-            ? getGithubReleaseImageJobNames(config, images)
-            : [],
-        );
+        const workflowJobs = {
+          ...withEnsureImages(
+            images,
+            jobs,
+            trigger === "mainBranch"
+              ? getGithubReleaseImageJobNames(config, images)
+              : [],
+          ),
+          ...markerJobs,
+        };
         const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
           ...(trigger === "mainBranch" && mainConcurrency
@@ -448,11 +468,15 @@ export class GithubBackend implements PipelineBackend {
             trigger === "mr"
               ? {
                   ...workflowJobs,
-                  ...makeAggregateCheckJob(workflowJobs, inRunDeliveryIds),
+                  ...makeAggregateCheckJob(workflowJobs, [
+                    ...inRunDeliveryIds,
+                    // skipped on purpose with the chains it gates
+                    ...Object.keys(markerJobs),
+                  ]),
                   // the stable review app result of an in-run deploy
                   ...(inRunCondition && inRunDeliveryIds.length > 0
                     ? makeReviewAppAggregateJob(
-                        inRunDeliveryIds,
+                        [...inRunDeliveryIds, REVIEW_DEPLOY_MARKER_JOB_ID],
                         inRunCondition,
                       )
                     : {}),
@@ -501,16 +525,19 @@ export class GithubBackend implements PipelineBackend {
         },
         jobs: withEnsureImages(images, reviewStopJobs),
       };
+      const guardedStopWorkflow = workflows[REVIEW_DEPLOY_WORKFLOW_FILE]
+        ? withReviewStopGuard(reviewStopWorkflow)
+        : reviewStopWorkflow;
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
       ]
         ? withReviewStopSwitch(
-            reviewStopWorkflow,
+            guardedStopWorkflow,
             reviewApps,
             isReviewDeployGated(reviewApps) &&
               getInRunDeployCondition(reviewApps) !== undefined,
           )
-        : reviewStopWorkflow;
+        : guardedStopWorkflow;
     }
 
     for (const [kind, bucket] of Object.entries(manualKindBuckets) as Array<
