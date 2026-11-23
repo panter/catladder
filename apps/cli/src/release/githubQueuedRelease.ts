@@ -21,6 +21,11 @@
  *   newer main head instead of dropping the release: the release then
  *   follows that head's run (see `handOverCancelledRun`)
  *
+ * - with `releases.requireStatus`, a commit is releasable only once an
+ *   external result (a commit status / check run, e.g. an e2e suite in
+ *   its own workflow after the dev deploy) is green for exactly that
+ *   commit; the guard also runs when that workflow completes
+ *
  * Every guard change to the marker is a compare-and-swap
  * (`--force-with-lease`): guards of different runs race, and only the
  * one whose expectation still holds may consume the marker — a queued
@@ -161,6 +166,139 @@ const swapMarker = async (expected: string, next: string | null) => {
 };
 
 /**
+ * `releases.requireStatus`, handed over by the generated workflow. Keep
+ * the names in sync with pipeline/src/release/index.ts.
+ */
+const getReleaseGate = () => {
+  const context = process.env.CATLADDER_RELEASE_REQUIRED_STATUS;
+  const workflow = process.env.CATLADDER_RELEASE_GATE_WORKFLOW;
+  return context && workflow ? { context, workflow } : null;
+};
+
+type GateState = "green" | "red" | "pending" | "missing";
+
+/**
+ * the state of the required result for exactly `sha`: a commit status
+ * with that context, or else a check run with that name (newest wins)
+ */
+const getGateState = async (
+  sha: string,
+  context: string,
+): Promise<GateState> => {
+  const statuses = await githubApi<Array<{ context: string; state: string }>>(
+    `commits/${sha}/statuses?per_page=100`,
+    `listing the statuses of ${sha}`,
+  );
+  const status = statuses.find((entry) => entry.context === context);
+  if (status) {
+    return status.state === "success"
+      ? "green"
+      : status.state === "pending"
+        ? "pending"
+        : "red";
+  }
+  const { check_runs: checkRuns = [] } = await githubApi<{
+    check_runs?: Array<{ status: string; conclusion: string | null }>;
+  }>(
+    `commits/${sha}/check-runs?check_name=${encodeURIComponent(context)}&filter=latest`,
+    `listing the check runs of ${sha}`,
+  );
+  const check = checkRuns[0];
+  if (!check) return "missing";
+  if (check.status !== "completed") return "pending";
+  if (check.conclusion === "success") return "green";
+  if (check.conclusion === "neutral" || check.conclusion === "skipped") {
+    return "missing";
+  }
+  return "red";
+};
+
+const describeGate = (context: string, state: GateState) =>
+  state === "missing"
+    ? `has no \`${context}\` result`
+    : state === "pending"
+      ? `\`${context}\` is still pending`
+      : `\`${context}\` is ${state}`;
+
+/**
+ * the main workflow for `sha` is green (or has none): release it — with
+ * a release gate only once its result is green. Waits (keeps the
+ * marker) while the result is pending or missing; consumes the marker
+ * and fails when it is red.
+ */
+const releaseIfGateAllows = async (sha: string) => {
+  const gate = getReleaseGate();
+  const state = gate ? await getGateState(sha, gate.context) : "green";
+  if (gate && (state === "pending" || state === "missing")) {
+    console.log(
+      `${sha}: ${describeGate(gate.context, state)} — the release waits for it`,
+    );
+    appendStepSummary(
+      `⏳ Queued release for \`${sha}\` waits: ${describeGate(gate.context, state)} yet. ` +
+        `It runs when the ${gate.workflow} workflow reports it green.`,
+    );
+    setStepOutput("release", "false");
+    return;
+  }
+  if (!(await swapMarker(sha, null))) {
+    setStepOutput("release", "false");
+    return;
+  }
+  if (gate && state === "red") {
+    appendStepSummary(
+      `❌ Queued release for \`${sha}\` **not executed**: ${describeGate(gate.context, state)}. ` +
+        `Fix forward and queue again via the 🚀 create release workflow.`,
+    );
+    fail(
+      `queued release not executed: ${sha} ${describeGate(gate.context, state).replace(/`/g, "")} — fix forward and queue the release again`,
+    );
+  }
+  console.log(`releasing ${sha}`);
+  appendStepSummary(
+    `✅ ${gate ? `\`${gate.context}\` and the main workflow are green` : "Main workflow succeeded"} for \`${sha}\` — running the queued release.`,
+  );
+  setStepOutput("sha", sha);
+  setStepOutput("release", "true");
+};
+
+/**
+ * the release gate of the create-release check, once the main workflow
+ * for `sha` is green: returns false when the release may run right
+ * away, queues it while the result is pending (true), fails when the
+ * result is red or missing
+ */
+const queueForGate = async (sha: string): Promise<boolean> => {
+  const gate = getReleaseGate();
+  if (!gate) return false;
+  const state = await getGateState(sha, gate.context);
+  if (state === "green") {
+    console.log(`${gate.context} is green for ${sha}`);
+    appendStepSummary(`✅ \`${gate.context}\` is green for \`${sha}\`.`);
+    return false;
+  }
+  if (state === "pending") {
+    await git("push", "origin", `+${sha}:${QUEUE_MARKER_REF}`);
+    console.log(
+      `${gate.context} is still pending for ${sha} — release queued until it is green`,
+    );
+    appendStepSummary(
+      `⏳ **Release queued** for \`${sha}\` — \`${gate.context}\` is still pending. ` +
+        `${workflowLink(GITHUB_ON_GREEN_WORKFLOW, "release on green")} creates the release as soon as the ${gate.workflow} workflow reports it green.`,
+    );
+    setStepOutput("queued", "true");
+    return true;
+  }
+  appendStepSummary(
+    `❌ Not releasing: \`${sha}\` ${describeGate(gate.context, state)}. ` +
+      `Release a commit whose \`${gate.context}\` is green, or re-run with the force checkbox to release anyway.`,
+  );
+  return fail(
+    `not releasing: ${sha} ${describeGate(gate.context, state).replace(/`/g, "")} — ` +
+      `release a commit whose ${gate.context} is green, or force the release`,
+  );
+};
+
+/**
  * `catci release github-queue-check` — first step of the manual
  * create-release dispatch job. Decides between releasing right away
  * (queued=false) and queueing for the running main workflow
@@ -170,23 +308,21 @@ export const githubQueueCheckJob = async () => {
   await ensureGitSafeDirectory();
   const sha = await git("rev-parse", "HEAD");
   const run = await getMainWorkflowRun(sha);
-  if (!run) {
-    console.log(`no main workflow run found for ${sha} — releasing right away`);
+  if (!run || (run.status === "completed" && run.conclusion === "success")) {
+    if (await queueForGate(sha)) {
+      return;
+    }
+    const why = run
+      ? `the main workflow for \`${sha}\` succeeded`
+      : `no main workflow run found for \`${sha}\``;
+    console.log(`${why.replace(/`/g, "")} — releasing right away`);
     appendStepSummary(
-      `ℹ️ No main workflow run found for \`${sha}\` — releasing right away.`,
+      `${run ? "✅" : "ℹ️"} ${why.charAt(0).toUpperCase()}${why.slice(1)} — releasing right away.`,
     );
     setStepOutput("queued", "false");
     return;
   }
   if (run.status === "completed") {
-    if (run.conclusion === "success") {
-      console.log(`main workflow for ${sha} succeeded — releasing right away`);
-      appendStepSummary(
-        `✅ The main workflow for \`${sha}\` succeeded — releasing right away.`,
-      );
-      setStepOutput("queued", "false");
-      return;
-    }
     appendStepSummary(
       `❌ Not releasing: the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run for \`${sha}\` concluded **${run.conclusion}**. ` +
         `Fix the pipeline, or re-run with the force checkbox to release anyway.`,
@@ -213,14 +349,17 @@ export const githubQueueCheckJob = async () => {
 };
 
 /**
- * `catci release github-queued-guard <head-sha> <conclusion>` — guard
- * step of the release-on-green workflow, running on every completed
- * main workflow run. Consumes the marker when it matches the run and
- * decides whether the release step runs (release=true).
+ * `catci release github-queued-guard <head-sha> <conclusion> [<workflow>]`
+ * — guard step of the release-on-green workflow, running on every
+ * completed main workflow run (and, with a release gate, every
+ * completed run of the gate's workflow, named by `<workflow>`).
+ * Consumes the marker when it matches the run and decides whether the
+ * release step runs (release=true, sha=<the released commit>).
  */
 export const githubQueuedGuardJob = async (
   headSha: string,
   conclusion: string,
+  workflowName?: string,
 ) => {
   await ensureGitSafeDirectory();
   const marker = await readRemoteRef(QUEUE_MARKER_REF);
@@ -228,6 +367,21 @@ export const githubQueuedGuardJob = async (
     console.log("no release queued — nothing to do");
     appendStepSummary("No release queued — nothing to do.");
     setStepOutput("release", "false");
+    return;
+  }
+  const gate = getReleaseGate();
+  if (gate && workflowName === gate.workflow) {
+    // the gate's workflow reported (for whichever commit): re-check the
+    // queued commit. Its main run's own guard handles a red main run.
+    const run = await getMainWorkflowRun(marker);
+    if (run && (run.status !== "completed" || run.conclusion !== "success")) {
+      console.log(
+        `main workflow for ${marker} is not green (yet) — leaving the queue to its guard`,
+      );
+      setStepOutput("release", "false");
+      return;
+    }
+    await releaseIfGateAllows(marker);
     return;
   }
   if (marker !== headSha) {
@@ -243,35 +397,29 @@ export const githubQueuedGuardJob = async (
   if (conclusion === "cancelled" && (await handOverCancelledRun(headSha))) {
     return;
   }
-  // consume the marker either way: the queued intent applied to exactly
-  // this run, whatever its outcome
+  if (conclusion === "success") {
+    await releaseIfGateAllows(headSha);
+    return;
+  }
+  // a red run consumes the marker: the queued intent applied to exactly
+  // this run
   if (!(await swapMarker(headSha, null))) {
     setStepOutput("release", "false");
     return;
   }
-  decideRelease(headSha, conclusion);
+  failRedRun(headSha, conclusion);
 };
 
-/**
- * releases (release=true) for a green run, fails for any other
- * conclusion — called once the marker for `sha` is consumed
- */
-const decideRelease = (sha: string, conclusion: string) => {
-  if (conclusion !== "success") {
-    appendStepSummary(
-      `❌ Queued release for \`${sha}\` **not executed**: the main workflow concluded **${conclusion}**. ` +
-        `Fix the pipeline and queue again via the 🚀 create release workflow.`,
-    );
-    fail(
-      `queued release not executed: the main workflow concluded '${conclusion}' — ` +
-        `fix the pipeline and queue the release again`,
-    );
-  }
-  console.log(`main workflow for ${sha} succeeded — releasing`);
+/** fails the guard for a queued release whose main run is not green */
+const failRedRun = (sha: string, conclusion: string): never => {
   appendStepSummary(
-    `✅ Main workflow for \`${sha}\` succeeded — running the queued release.`,
+    `❌ Queued release for \`${sha}\` **not executed**: the main workflow concluded **${conclusion}**. ` +
+      `Fix the pipeline and queue again via the 🚀 create release workflow.`,
   );
-  setStepOutput("release", "true");
+  return fail(
+    `queued release not executed: the main workflow concluded '${conclusion}' — ` +
+      `fix the pipeline and queue the release again`,
+  );
 };
 
 /**
@@ -326,21 +474,18 @@ const handOverCancelledRun = async (sha: string): Promise<boolean> => {
     setStepOutput("release", "false");
     return true;
   }
+  if (!run || run.conclusion === "success") {
+    // green (or no run, e.g. a [skip ci] commit — like the
+    // create-release check): its guard already ran while the marker
+    // still pointed here, so decide here
+    await releaseIfGateAllows(head);
+    return true;
+  }
   if (!(await swapMarker(head, null))) {
     // the guard of the newer run consumed it
     setStepOutput("release", "false");
     return true;
   }
-  if (!run) {
-    console.log(
-      `no main workflow run found for ${head} — releasing right away`,
-    );
-    appendStepSummary(
-      `ℹ️ No main workflow run found for \`${head}\` — releasing right away.`,
-    );
-    setStepOutput("release", "true");
-    return true;
-  }
-  decideRelease(head, run.conclusion ?? "unknown");
+  failRedRun(head, run.conclusion ?? "unknown");
   return true;
 };

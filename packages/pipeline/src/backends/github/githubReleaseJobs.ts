@@ -4,12 +4,34 @@ import {
   ENSURE_IMAGES_JOB_ID,
   makeEnsureImagesGithubJob,
 } from "./ensureImageJobs";
-import { getReleaseMethod } from "../../release";
+import {
+  getReleaseMethod,
+  getReleaseRequiredStatus,
+  RELEASE_GATE_WORKFLOW_ENV,
+  RELEASE_REQUIRED_STATUS_ENV,
+} from "../../release";
 import { GENERATED_CATCI_FOLDER } from "../../catci/shippedCatci";
 import type { Config } from "../../types";
 import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 
 const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
+
+/** reading the gating commit status / check run */
+const REQUIRED_STATUS_PERMISSIONS = {
+  statuses: "read",
+  checks: "read",
+} as const;
+
+/** `releases.requireStatus` for catci's queue commands */
+const requiredStatusEnv = (config: Config): Record<string, string> => {
+  const required = getReleaseRequiredStatus(config);
+  return required
+    ? {
+        [RELEASE_REQUIRED_STATUS_ENV]: required.context,
+        [RELEASE_GATE_WORKFLOW_ENV]: required.workflow,
+      }
+    : {};
+};
 
 /**
  * the image job name of the release image, when it is a custom image —
@@ -67,6 +89,13 @@ const createReleaseJob = (
      */
     queueCheck?: boolean;
     /**
+     * github expression of the commit the guard gated
+     * (`releases.requireStatus`): the job fails right after the
+     * checkout when the main branch moved on since, so an ungated
+     * commit is never released
+     */
+    gatedSha?: string;
+    /**
      * `if` expression on the queue-check step (e.g. skip it on a forced
      * release); a skipped check leaves `queued` empty, so the release
      * step still runs
@@ -75,6 +104,7 @@ const createReleaseJob = (
   } = {},
 ): GithubJob => {
   const method = getReleaseMethod(config);
+  const requiredStatus = getReleaseRequiredStatus(config);
   const resolved = images.resolveRef({ catladderImage: method.image });
   const imageNeeds =
     !options.skipImageNeeds &&
@@ -107,6 +137,7 @@ const createReleaseJob = (
       contents: "write",
       actions: "write",
       ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
+      ...(requiredStatus ? REQUIRED_STATUS_PERMISSIONS : {}),
     },
     ...(allNeeds.length > 0 ? { needs: allNeeds } : {}),
     env: {
@@ -116,6 +147,7 @@ const createReleaseJob = (
       // a deploy key can — empty when not provisioned, then the job
       // pushes with the workflow token (fine without gating)
       CATLADDER_RELEASE_KEY: "${{ secrets.CATLADDER_RELEASE_KEY }}",
+      ...requiredStatusEnv(config),
       ...options.extraEnv,
     },
     steps: [
@@ -126,6 +158,21 @@ const createReleaseJob = (
         // tags since the last release) to determine the version
         with: { "fetch-depth": 0 },
       },
+      ...(options.gatedSha
+        ? [
+            {
+              name: "check gated commit",
+              env: { GATED_SHA: options.gatedSha },
+              run: [
+                'if [ "$(git rev-parse HEAD)" != "$GATED_SHA" ]; then',
+                '  echo "::error::main moved on since $GATED_SHA passed the release gate — not releasing an ungated commit. Queue the release again via 🚀 catladder create release."',
+                "  exit 1",
+                "fi",
+              ].join("\n"),
+              shell: "bash",
+            },
+          ]
+        : []),
       ...(options.queueCheck
         ? [
             {
@@ -250,11 +297,16 @@ export const getGithubReleaseOnGreenWorkflow = (
   if (config.releases?.when === "auto") {
     return null;
   }
+  const requiredStatus = getReleaseRequiredStatus(config);
   return {
     name: "🛠️ catladder release on green",
     on: {
       workflow_run: {
-        workflows: [mainWorkflowName],
+        // with a release gate, the gate's workflow completing is the
+        // other moment a queued release can become releasable
+        workflows: requiredStatus
+          ? [mainWorkflowName, requiredStatus.workflow]
+          : [mainWorkflowName],
         types: ["completed"],
       },
     },
@@ -266,15 +318,27 @@ export const getGithubReleaseOnGreenWorkflow = (
         // consuming the queue marker is a ref deletion; a marker of a
         // cancelled run moves on to the newer main run, whose state
         // the guard reads from the actions api
-        permissions: { contents: "write", actions: "read" },
-        env: { GITHUB_TOKEN: "${{ github.token }}" },
-        outputs: { release: "${{ steps.guard.outputs.release }}" },
+        permissions: {
+          contents: "write",
+          actions: "read",
+          ...(requiredStatus ? REQUIRED_STATUS_PERMISSIONS : {}),
+        },
+        env: {
+          GITHUB_TOKEN: "${{ github.token }}",
+          ...requiredStatusEnv(config),
+        },
+        outputs: {
+          release: "${{ steps.guard.outputs.release }}",
+          ...(requiredStatus ? { sha: "${{ steps.guard.outputs.sha }}" } : {}),
+        },
         steps: [
           { name: "Checkout", uses: "actions/checkout@v4" },
           {
             name: "check queued release",
             id: "guard",
-            run: `node ${CATCI} release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"`,
+            run: `node ${CATCI} release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"${
+              requiredStatus ? ` "\${{ github.event.workflow_run.name }}"` : ""
+            }`,
             shell: "bash",
           },
         ],
@@ -283,6 +347,9 @@ export const getGithubReleaseOnGreenWorkflow = (
         ...createReleaseJob(config, images, {
           needs: ["guard"],
           skipImageNeeds: true,
+          ...(requiredStatus
+            ? { gatedSha: "${{ needs.guard.outputs.sha }}" }
+            : {}),
         }),
         if: "${{ needs.guard.outputs.release == 'true' }}",
       },

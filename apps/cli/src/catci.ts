@@ -77,11 +77,14 @@ usage:
       running (queued=true, marker ref for the release-on-green
       workflow), fails when it concluded red
 
-  catci release github-queued-guard <head-sha> <conclusion>
+  catci release github-queued-guard <head-sha> <conclusion> [<workflow>]
       github only, guard of the release-on-green workflow: consumes the
       queue marker when it matches the completed main run and decides
       whether the release step runs (release=true step output); a run
-      cancelled by a newer main run hands the queued release on to it
+      cancelled by a newer main run hands the queued release on to it.
+      With releases.requireStatus (CATLADDER_RELEASE_REQUIRED_STATUS,
+      CATLADDER_RELEASE_GATE_WORKFLOW), it also runs when the gate's
+      <workflow> completes and releases only once the result is green
 
   catci review-app github-trigger
       github only, last job of the review workflow: once the PR's CI is
@@ -218,9 +221,9 @@ const main = async () => {
   if (
     group === "release" &&
     command === "github-queued-guard" &&
-    args.length === 2
+    (args.length === 2 || args.length === 3)
   ) {
-    return githubQueuedGuardJob(args[0], args[1]);
+    return githubQueuedGuardJob(args[0], args[1], args[2]);
   }
   if (
     group === "review-app" &&
