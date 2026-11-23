@@ -1,6 +1,6 @@
 import type { RunnerImageName } from "../runner";
 import type { Config } from "../types/config";
-import type { ReleaseMethod } from "../types/release";
+import type { ReleaseMethod, ReleaseRequiredStatus } from "../types/release";
 
 /**
  * what a release method contributes to the release jobs. The job shape
@@ -48,3 +48,48 @@ export const RELEASE_METHODS: Record<ReleaseMethod, ReleaseMethodDefinition> = {
 
 export const getReleaseMethod = (config: Config): ReleaseMethodDefinition =>
   RELEASE_METHODS[config.releases?.method ?? "semantic-release"];
+
+/**
+ * env vars that hand `releases.requireStatus` to catci's release queue
+ * commands. Keep in sync with cli/src/release/githubQueuedRelease.ts.
+ */
+export const RELEASE_REQUIRED_STATUS_ENV = "CATLADDER_RELEASE_REQUIRED_STATUS";
+export const RELEASE_GATE_WORKFLOW_ENV = "CATLADDER_RELEASE_GATE_WORKFLOW";
+
+/**
+ * the validated `releases.requireStatus` (undefined when not set)
+ */
+export const getReleaseRequiredStatus = (
+  config: Config,
+): ReleaseRequiredStatus | undefined => {
+  const required = config.releases?.requireStatus;
+  if (required === undefined) {
+    return undefined;
+  }
+  const path = "releases.requireStatus";
+  if (typeof required !== "object" || required === null) {
+    throw new Error(`${path} must be { context, workflow }`);
+  }
+  for (const key of ["context", "workflow"] as const) {
+    const value = required[key];
+    if (typeof value !== "string" || value.trim().length === 0) {
+      throw new Error(
+        `${path}.${key} must be a non-empty string, got: ${JSON.stringify(value)}`,
+      );
+    }
+  }
+  if (config.releases?.when === "auto") {
+    throw new Error(
+      `${path} needs releases.when "manual": an automatic release runs at the end of the main workflow, before any later result exists`,
+    );
+  }
+  const gitlabEnabled = config.pipelines
+    ? !!config.pipelines.gitlab
+    : (config.pipelineType ?? "gitlab") === "gitlab";
+  if (gitlabEnabled) {
+    throw new Error(
+      `${path} is github only — remove it or disable the gitlab pipeline (it would release without the gate there)`,
+    );
+  }
+  return required;
+};

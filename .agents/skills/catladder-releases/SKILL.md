@@ -47,11 +47,41 @@ are generated, never hand-edited.
 
 There is always also a **force release** escape hatch that releases
 **immediately**, ignoring the state of the pipeline: on GitLab the
-manual `⚠️ force create release` job, on GitHub the *force* checkbox of
+manual `⚠️ force create release` job, on GitHub the _force_ checkbox of
 the `🚀 catladder create release` workflow. With `method: "changesets"`
 forcing has an extra meaning: it releases **even when no changesets are
 pending** (patch bump with a generic changelog entry) — the recovery
 path when a change was merged without a changeset and must ship now.
+
+## `requireStatus` — gate releases on an external result (GitHub)
+
+When a check is too slow for the main workflow (e.g. a full e2e suite
+the next deploy should not wait for), run it in a repo-maintained
+workflow after the main workflow and let it report a commit status (or
+check run). `releases.requireStatus` then releases a commit only once
+that result is green **for exactly that commit**:
+
+```ts
+releases: {
+  when: "manual",
+  requireStatus: { context: "e2e-main", workflow: "🔬 e2e main" },
+},
+```
+
+- `context` — the commit status context or check run name; `workflow`
+  — the `name:` of the workflow reporting it (statuses written with the
+  workflow token trigger nothing, so `release on green` listens to that
+  workflow's completion instead).
+- `create release`: green → releases right away; pending → queued (runs
+  when both main and the result are green); red or **no result at all**
+  → fails (release a commit that has a green result, or force).
+- A queued release waits while the result is pending/missing and is
+  dropped (with a failure) when it turns red.
+- The release job checks that main still points at the gated commit —
+  if main moved on meanwhile it fails instead of releasing an untested
+  commit; queue again.
+- The force checkbox skips the gate. GitHub only (generation fails when
+  the gitlab pipeline is enabled) and only with `when: "manual"`.
 
 On GitHub, other manual tasks are split into per-kind dispatch
 workflows the same way (`▶️ catladder deploy`, `⏹️ catladder stop`,
@@ -65,12 +95,14 @@ entry on the releases page of the git host (gitlab `/-/releases`,
 github `/releases`) carrying the release notes.
 
 ### `semantic-release` (default)
+
 The version is derived automatically from **conventional commit
 messages** since the last release (`fix:` → patch, `feat:` → minor,
 `BREAKING CHANGE` → major). Nothing to declare by hand — just write
 conventional commits.
 
 ### `changesets`
+
 Developers declare changes intentionally as **`.changeset/*.md` files**
 (the official changesets format: a bump type + a human-written summary).
 The release job consumes all pending changesets, takes the highest bump,
@@ -141,11 +173,11 @@ the `security` commands in the `catladder-cli` reference.
 - Wrong version bump → check commit types (semantic-release) or the bump
   levels in the changeset files (changesets).
 - GitHub: the push is rejected with `GH013 … Required status check
-  "catladder ✅" is expected` (or GH006) → the release push has to use
+"catladder ✅" is expected` (or GH006) → the release push has to use
   the release deploy key, the only actor that bypasses the merge-gating
   ruleset. `yarn catladder project setup` provisions it (deploy key
   `catladder release` + secret `CATLADDER_RELEASE_KEY`), `yarn catladder
-  project doctor` verifies it — including that the committed release
+project doctor` verifies it — including that the committed release
   workflow runs the current release image; an older semantic-release
   image pushed with the workflow token and ignored the key (regenerate
   with `yarn catenv` and commit).
@@ -157,7 +189,7 @@ the `security` commands in the `catladder-cli` reference.
 - Tag pushed but nothing on the releases page → with `changesets` the
   entry is created via the host api after the push and never fails the
   job (the release itself is done); look for the `could not create the
-  release entry` warning at the end of the release job log. On gitlab
+release entry` warning at the end of the release job log. On gitlab
   it needs `GL_TOKEN` (`catladder project renew-token`). Releases
   tagged before catladder created entries have none — that is not fixed
   retroactively, create them by hand from the tag.

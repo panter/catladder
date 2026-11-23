@@ -2,7 +2,10 @@ import { mkdtemp, readFile, rm, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { githubQueuedGuardJob } from "../githubQueuedRelease";
+import {
+  githubQueueCheckJob,
+  githubQueuedGuardJob,
+} from "../githubQueuedRelease";
 
 const MARKER = "refs/catladder/release-queued";
 const MAIN = "refs/heads/main";
@@ -15,6 +18,9 @@ const remote = vi.hoisted(() => ({
   refs: new Map<string, string>(),
   runs: new Map<string, { status: string; conclusion: string | null }>(),
   ancestors: new Set<string>(),
+  statuses: new Map<string, string>(),
+  checks: new Map<string, { status: string; conclusion: string | null }>(),
+  head: "",
   /** runs right before a lease check, to simulate a racing guard */
   beforePush: undefined as undefined | (() => void),
 }));
@@ -24,6 +30,9 @@ vi.mock("../releaseGit", () => ({
     if (command === "ls-remote") {
       const sha = remote.refs.get(args[1]);
       return sha ? `${sha}\t${args[1]}` : "";
+    }
+    if (command === "rev-parse") {
+      return remote.head;
     }
     if (command === "push") {
       remote.beforePush?.();
@@ -67,6 +76,9 @@ beforeEach(async () => {
   remote.refs.clear();
   remote.runs.clear();
   remote.ancestors.clear();
+  remote.statuses.clear();
+  remote.checks.clear();
+  remote.head = "";
   remote.beforePush = undefined;
   vi.stubEnv("GITHUB_OUTPUT", outputFile);
   vi.stubEnv("GITHUB_STEP_SUMMARY", join(workDir, "summary"));
@@ -87,6 +99,23 @@ beforeEach(async () => {
             ? "ahead"
             : "diverged",
         });
+      }
+      const statuses = /\/commits\/(\w+)\/statuses/.exec(url);
+      if (statuses) {
+        const state = remote.statuses.get(statuses[1]);
+        return Response.json(
+          state
+            ? [
+                { context: "other", state: "failure" },
+                { context: "e2e-main", state },
+              ]
+            : [],
+        );
+      }
+      const checks = /\/commits\/(\w+)\/check-runs/.exec(url);
+      if (checks) {
+        const check = remote.checks.get(checks[1]);
+        return Response.json({ check_runs: check ? [check] : [] });
       }
       const sha = /head_sha=(\w+)/.exec(url)?.[1] ?? "";
       const run = remote.runs.get(sha);
@@ -118,7 +147,7 @@ describe("githubQueuedGuardJob", () => {
   it("consumes the marker and releases for a green run", async () => {
     remote.refs.set(MARKER, "aaa");
     await githubQueuedGuardJob("aaa", "success");
-    expect(await output()).toEqual({ release: "true" });
+    expect(await output()).toEqual({ release: "true", sha: "aaa" });
     expect(remote.refs.has(MARKER)).toBe(false);
   });
 
@@ -154,7 +183,7 @@ describe("githubQueuedGuardJob", () => {
     it("releases when the newer head's run already succeeded", async () => {
       remote.runs.set("ccc", { status: "completed", conclusion: "success" });
       await githubQueuedGuardJob("aaa", "cancelled");
-      expect(await output()).toEqual({ release: "true" });
+      expect(await output()).toEqual({ release: "true", sha: "ccc" });
       expect(remote.refs.has(MARKER)).toBe(false);
     });
 
@@ -168,7 +197,7 @@ describe("githubQueuedGuardJob", () => {
 
     it("releases right away when the newer head has no main run", async () => {
       await githubQueuedGuardJob("aaa", "cancelled");
-      expect(await output()).toEqual({ release: "true" });
+      expect(await output()).toEqual({ release: "true", sha: "ccc" });
       expect(remote.refs.has(MARKER)).toBe(false);
     });
 
@@ -198,6 +227,90 @@ describe("githubQueuedGuardJob", () => {
         "exit 1",
       );
       expect(remote.refs.has(MARKER)).toBe(false);
+    });
+  });
+
+  describe("release gate (requireStatus)", () => {
+    beforeEach(() => {
+      vi.stubEnv("CATLADDER_RELEASE_REQUIRED_STATUS", "e2e-main");
+      vi.stubEnv("CATLADDER_RELEASE_GATE_WORKFLOW", "🔬 e2e main");
+      remote.refs.set(MARKER, "aaa");
+    });
+
+    it("waits after a green main run while the result is pending", async () => {
+      remote.statuses.set("aaa", "pending");
+      await githubQueuedGuardJob("aaa", "success", "🛠️ catladder main");
+      expect(await output()).toEqual({ release: "false" });
+      expect(remote.refs.get(MARKER)).toBe("aaa");
+    });
+
+    it("waits after a green main run while the result is missing", async () => {
+      await githubQueuedGuardJob("aaa", "success", "🛠️ catladder main");
+      expect(await output()).toEqual({ release: "false" });
+      expect(remote.refs.get(MARKER)).toBe("aaa");
+    });
+
+    it("releases when the gate workflow reports green", async () => {
+      remote.runs.set("aaa", { status: "completed", conclusion: "success" });
+      remote.statuses.set("aaa", "success");
+      // the gate run's own head sha is irrelevant
+      await githubQueuedGuardJob("zzz", "success", "🔬 e2e main");
+      expect(await output()).toEqual({ release: "true", sha: "aaa" });
+      expect(remote.refs.has(MARKER)).toBe(false);
+    });
+
+    it("reads a check run when there is no commit status", async () => {
+      remote.runs.set("aaa", { status: "completed", conclusion: "success" });
+      remote.checks.set("aaa", { status: "completed", conclusion: "success" });
+      await githubQueuedGuardJob("zzz", "success", "🔬 e2e main");
+      expect(await output()).toEqual({ release: "true", sha: "aaa" });
+    });
+
+    it("fails and drops the release when the result is red", async () => {
+      remote.runs.set("aaa", { status: "completed", conclusion: "success" });
+      remote.statuses.set("aaa", "failure");
+      await expect(
+        githubQueuedGuardJob("zzz", "success", "🔬 e2e main"),
+      ).rejects.toThrow("exit 1");
+      expect(remote.refs.has(MARKER)).toBe(false);
+    });
+
+    it("leaves the queue to the main guard while main is still running", async () => {
+      remote.runs.set("aaa", { status: "in_progress", conclusion: null });
+      remote.statuses.set("aaa", "success");
+      await githubQueuedGuardJob("zzz", "success", "🔬 e2e main");
+      expect(await output()).toEqual({ release: "false" });
+      expect(remote.refs.get(MARKER)).toBe("aaa");
+    });
+
+    describe("create release check", () => {
+      beforeEach(() => {
+        remote.refs.delete(MARKER);
+        remote.head = "aaa";
+        remote.runs.set("aaa", { status: "completed", conclusion: "success" });
+      });
+
+      it("releases right away when the result is green", async () => {
+        remote.statuses.set("aaa", "success");
+        await githubQueueCheckJob();
+        expect(await output()).toEqual({ queued: "false" });
+      });
+
+      it("queues while the result is pending", async () => {
+        remote.statuses.set("aaa", "pending");
+        await githubQueueCheckJob();
+        expect(await output()).toEqual({ queued: "true" });
+        expect(remote.refs.get(MARKER)).toBe("aaa");
+      });
+
+      it.each(["failure", undefined])(
+        "fails when the result is %s",
+        async (state) => {
+          if (state) remote.statuses.set("aaa", state);
+          await expect(githubQueueCheckJob()).rejects.toThrow("exit 1");
+          expect(remote.refs.has(MARKER)).toBe(false);
+        },
+      );
     });
   });
 });

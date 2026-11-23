@@ -34,6 +34,29 @@ On GitLab the button is a quick no-op job that records the intent; the actual re
 
 Forcing a release skips all of this and releases **immediately**, whatever the pipeline state: on GitLab via the `⚠️ force create release` job, on GitHub via the _force_ checkbox of the create-release workflow.
 
+## Gating releases on an external result (GitHub)
+
+Some checks are too slow for the main workflow, e.g. a full e2e suite that the next deploy should not wait for. Run them in a workflow of your own after the main workflow (`on: workflow_run`) and report the result as a commit status or check run. `releases.requireStatus` then releases a commit only once that result is green for **exactly that commit**:
+
+```ts
+releases: {
+  when: "manual",
+  requireStatus: {
+    // the commit status context (or check run name) that must be green
+    context: "e2e-main",
+    // the name of the workflow that reports it
+    workflow: "🔬 e2e main",
+  },
+},
+```
+
+- `🚀 catladder create release` releases right away when the main workflow and the result are green, queues the release while the result is pending, and fails when it is red or missing.
+- A queued release runs when the main workflow and the result are both green. The `🛠️ catladder release on green` workflow also runs when the gate workflow completes, because statuses written with the workflow token trigger no workflows themselves.
+- The release job checks that the main branch still points at the gated commit and fails otherwise. In that case, queue the release again.
+- The _force_ checkbox skips the gate.
+
+`requireStatus` is GitHub only (generation fails when the GitLab pipeline is enabled) and needs `when: "manual"`.
+
 ## Release methods
 
 ### `semantic-release` (default)

@@ -29,4 +29,35 @@ export type ReleaseConfig = {
    * Defaults to "semantic-release".
    */
   method?: ReleaseMethod;
+  /**
+   * github only, manual releases only: release a commit only when an
+   * external result for exactly that commit is green — e.g. an e2e suite
+   * that runs in its own workflow after the main workflow deployed dev
+   * (outside the main workflow, so the next deploy never waits for it).
+   *
+   * - `create release` on a commit whose result is pending queues the
+   *   release; it runs once the main workflow and the result are green
+   * - a red result, or none at all, does not release (queue again once
+   *   a commit has a green result, or force the release)
+   * - the release runs only when the main branch still points at the
+   *   gated commit
+   *
+   * The force checkbox of `create release` skips the gate.
+   */
+  requireStatus?: ReleaseRequiredStatus;
+};
+
+export type ReleaseRequiredStatus = {
+  /**
+   * the commit status context (or check run name) that must be green,
+   * e.g. "e2e-main"
+   */
+  context: string;
+  /**
+   * the name of the workflow that reports it (its `name:`), e.g.
+   * "🔬 e2e main". Its completion triggers the queued-release check:
+   * statuses written with the workflow token trigger no workflow
+   * themselves.
+   */
+  workflow: string;
 };
