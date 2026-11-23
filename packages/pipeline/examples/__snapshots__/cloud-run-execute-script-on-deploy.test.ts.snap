@@ -1007,7 +1007,7 @@ catladder-review-stop.yml:
             gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
             echo 'stopped'
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --quiet --delete-tags
-            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
             set +e
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app --quiet --delete-tags
             set -e
@@ -1261,7 +1261,7 @@ catladder-stop.yml:
             gcloud run services delete pan-test-app-dev-app --project=google-project-id --region=europe-west6
             echo 'stopped'
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --quiet --delete-tags
-            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
             set -e
           shell: bash
       if: \${{ inputs.job == 'app-stop-dev' }}
@@ -1313,7 +1313,7 @@ catladder-stop.yml:
             gcloud run services delete pan-test-app-stage-app --project=google-project-id --region=europe-west6
             echo 'stopped'
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --quiet --delete-tags
-            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
             set -e
           shell: bash
       if: \${{ inputs.job == 'app-stop-stage' }}
@@ -1365,7 +1365,7 @@ catladder-stop.yml:
             gcloud run services delete pan-test-app-prod-app --project=google-project-id --region=europe-west6
             echo 'stopped'
             gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --quiet --delete-tags
-            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
             set -e
           shell: bash
       if: \${{ inputs.job == 'app-stop-prod' }}
@@ -1735,8 +1735,8 @@ collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
 gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app@$version --quiet --delete-tags; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
 set -e
 collapseable_section_end "cleanup"
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
@@ -2106,8 +2106,8 @@ collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
 gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")@$version --quiet --delete-tags; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
 set +e
 gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app --quiet --delete-tags
 set -e
@@ -2353,8 +2353,8 @@ collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
 gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app@$version --quiet --delete-tags; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
 set -e
 collapseable_section_end "cleanup"
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
@@ -2597,8 +2597,8 @@ collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
 gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app@$version --quiet --delete-tags; done
-gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +11 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
 set -e
 collapseable_section_end "cleanup"
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
@@ -3251,8 +3251,8 @@ create release:
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
@@ -3301,7 +3301,7 @@ create release:
     - gcloud run services delete pan-test-app-dev-app --project=google-project-id --region=europe-west6
     - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
   environment:
     name: dev/app
@@ -3671,8 +3671,8 @@ create release:
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app --quiet --delete-tags
     - set -e
@@ -3724,7 +3724,7 @@ create release:
     - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
     - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app --quiet --delete-tags
     - set -e
@@ -3973,8 +3973,8 @@ create release:
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +6 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
@@ -4016,7 +4016,7 @@ create release:
     - gcloud run services delete pan-test-app-stage-app --project=google-project-id --region=europe-west6
     - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
   environment:
     name: stage/app
@@ -4262,8 +4262,8 @@ create release:
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +11 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
@@ -4305,7 +4305,7 @@ create release:
     - gcloud run services delete pan-test-app-prod-app --project=google-project-id --region=europe-west6
     - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +4 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
   environment:
     name: prod/app
