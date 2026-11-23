@@ -263,8 +263,10 @@ export const getGithubReleaseOnGreenWorkflow = (
       guard: {
         name: "check queued release",
         "runs-on": "ubuntu-latest",
-        // consuming the queue marker is a ref deletion
-        permissions: { contents: "write" },
+        // consuming the queue marker is a ref deletion; a marker of a
+        // cancelled run moves on to the newer main run, whose state
+        // the guard reads from the actions api
+        permissions: { contents: "write", actions: "read" },
         env: { GITHUB_TOKEN: "${{ github.token }}" },
         outputs: { release: "${{ steps.guard.outputs.release }}" },
         steps: [

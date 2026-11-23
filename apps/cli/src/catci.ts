@@ -80,7 +80,8 @@ usage:
   catci release github-queued-guard <head-sha> <conclusion>
       github only, guard of the release-on-green workflow: consumes the
       queue marker when it matches the completed main run and decides
-      whether the release step runs (release=true step output)
+      whether the release step runs (release=true step output); a run
+      cancelled by a newer main run hands the queued release on to it
 
   catci review-app github-trigger
       github only, last job of the review workflow: once the PR's CI is

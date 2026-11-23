@@ -79,7 +79,8 @@ Cancellation on a new commit depends on the CI backend:
 
   When `main` is set, `group` defaults to `catladder-main` and
   `cancelInProgress` defaults to `false`. This serializes main runs in
-  the group; GitHub can replace an older pending run with a newer one.
+  the group; GitHub can replace an older pending run with a newer one
+  (a release queued for the replaced run moves on to the newer one).
   Set `cancelInProgress: true` to also cancel the running main pipeline
   on a new push. Cloud Run jobs and service updates already started
   still finish; the next run deploys the newer state. Cancellation can

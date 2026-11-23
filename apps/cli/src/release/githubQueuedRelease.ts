@@ -16,6 +16,15 @@
  *   workflow) runs `github-queued-guard` on every completed main run:
  *   it consumes the marker when it matches the run's head sha and
  *   releases only when the run concluded green
+ * - a run that was cancelled because a newer main run replaced it
+ *   (`pipelines.github.concurrency.main`) hands the marker on to the
+ *   newer main head instead of dropping the release: the release then
+ *   follows that head's run (see `handOverCancelledRun`)
+ *
+ * Every guard change to the marker is a compare-and-swap
+ * (`--force-with-lease`): guards of different runs race, and only the
+ * one whose expectation still holds may consume the marker — a queued
+ * release runs at most once.
  */
 import { appendFileSync } from "fs";
 import { git } from "./releaseGit";
@@ -41,6 +50,13 @@ const GITHUB_ON_GREEN_WORKFLOW = "catladder-release-on-green.yml";
  * Writable with the job token (`permissions: contents: write`).
  */
 const QUEUE_MARKER_REF = "refs/catladder/release-queued";
+
+/**
+ * the branch the main workflow runs on. Keep in sync with
+ * TRIGGER_WORKFLOWS.mainBranch in
+ * pipeline/src/backends/github/GithubBackend.ts.
+ */
+const MAIN_BRANCH_REF = "refs/heads/main";
 
 /**
  * github container jobs: the workspace volume is owned by the host
@@ -78,31 +94,70 @@ const setStepOutput = (name: string, value: string) => {
   appendFileSync(file, `${name}=${value}\n`);
 };
 
-const getMainWorkflowRun = async (
-  sha: string,
-): Promise<{ status: string; conclusion: string | null } | null> => {
+const githubApi = async <T>(path: string, what: string): Promise<T> => {
   const apiUrl = process.env.GITHUB_API_URL ?? "https://api.github.com";
   const repository = requireEnv("GITHUB_REPOSITORY");
   const token = requireEnv("GITHUB_TOKEN");
-  const response = await fetch(
-    `${apiUrl}/repos/${repository}/actions/workflows/${GITHUB_MAIN_WORKFLOW}/runs?head_sha=${sha}&per_page=5`,
-    {
-      headers: {
-        authorization: `Bearer ${token}`,
-        accept: "application/vnd.github+json",
-      },
+  const response = await fetch(`${apiUrl}/repos/${repository}/${path}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+      accept: "application/vnd.github+json",
     },
-  );
+  });
   if (!response.ok) {
     throw new Error(
-      `listing ${GITHUB_MAIN_WORKFLOW} runs failed: ${response.status} ${await response.text()}`,
+      `${what} failed: ${response.status} ${await response.text()}`,
     );
   }
-  const data = (await response.json()) as {
-    workflow_runs?: Array<{ status: string; conclusion: string | null }>;
-  };
+  return (await response.json()) as T;
+};
+
+type WorkflowRun = { status: string; conclusion: string | null };
+
+const getMainWorkflowRun = async (sha: string): Promise<WorkflowRun | null> => {
+  const data = await githubApi<{ workflow_runs?: WorkflowRun[] }>(
+    `actions/workflows/${GITHUB_MAIN_WORKFLOW}/runs?head_sha=${sha}&per_page=5`,
+    `listing ${GITHUB_MAIN_WORKFLOW} runs`,
+  );
   // newest first — re-runs replace older attempts
   return data.workflow_runs?.[0] ?? null;
+};
+
+/**
+ * whether `descendant` contains `ancestor` — asked github instead of
+ * the local clone, which is shallow in the guard job
+ */
+const isAncestor = async (ancestor: string, descendant: string) => {
+  const data = await githubApi<{ status: string }>(
+    `compare/${ancestor}...${descendant}`,
+    `comparing ${ancestor}...${descendant}`,
+  );
+  return data.status === "ahead" || data.status === "identical";
+};
+
+const readRemoteRef = async (ref: string) =>
+  (await git("ls-remote", "origin", ref)).split(/\s+/)[0] ?? "";
+
+/**
+ * compare-and-swap of the marker: points it at `next` (or deletes it)
+ * only while it still points at `expected`. False when another guard
+ * changed it first.
+ */
+const swapMarker = async (expected: string, next: string | null) => {
+  try {
+    await git(
+      "push",
+      `--force-with-lease=${QUEUE_MARKER_REF}:${expected}`,
+      "origin",
+      next ? `${next}:${QUEUE_MARKER_REF}` : `:${QUEUE_MARKER_REF}`,
+    );
+    return true;
+  } catch (error) {
+    console.log(
+      `the queued release changed meanwhile — leaving it to the other guard (${error})`,
+    );
+    return false;
+  }
 };
 
 /**
@@ -168,8 +223,7 @@ export const githubQueuedGuardJob = async (
   conclusion: string,
 ) => {
   await ensureGitSafeDirectory();
-  const markerLine = await git("ls-remote", "origin", QUEUE_MARKER_REF);
-  const marker = markerLine.split(/\s+/)[0] ?? "";
+  const marker = await readRemoteRef(QUEUE_MARKER_REF);
   if (!marker) {
     console.log("no release queued — nothing to do");
     appendStepSummary("No release queued — nothing to do.");
@@ -186,12 +240,26 @@ export const githubQueuedGuardJob = async (
     setStepOutput("release", "false");
     return;
   }
+  if (conclusion === "cancelled" && (await handOverCancelledRun(headSha))) {
+    return;
+  }
   // consume the marker either way: the queued intent applied to exactly
   // this run, whatever its outcome
-  await git("push", "origin", `:${QUEUE_MARKER_REF}`);
+  if (!(await swapMarker(headSha, null))) {
+    setStepOutput("release", "false");
+    return;
+  }
+  decideRelease(headSha, conclusion);
+};
+
+/**
+ * releases (release=true) for a green run, fails for any other
+ * conclusion — called once the marker for `sha` is consumed
+ */
+const decideRelease = (sha: string, conclusion: string) => {
   if (conclusion !== "success") {
     appendStepSummary(
-      `❌ Queued release for \`${headSha}\` **not executed**: the main workflow concluded **${conclusion}**. ` +
+      `❌ Queued release for \`${sha}\` **not executed**: the main workflow concluded **${conclusion}**. ` +
         `Fix the pipeline and queue again via the 🚀 create release workflow.`,
     );
     fail(
@@ -199,9 +267,80 @@ export const githubQueuedGuardJob = async (
         `fix the pipeline and queue the release again`,
     );
   }
-  console.log(`main workflow for ${headSha} succeeded — releasing`);
+  console.log(`main workflow for ${sha} succeeded — releasing`);
   appendStepSummary(
-    `✅ Main workflow for \`${headSha}\` succeeded — running the queued release.`,
+    `✅ Main workflow for \`${sha}\` succeeded — running the queued release.`,
   );
   setStepOutput("release", "true");
+};
+
+/**
+ * the main run of a queued release was cancelled. With main
+ * concurrency, that is github replacing a pending run by the run of a
+ * newer push — the release must not get lost with it. When the main
+ * branch moved on to a commit containing the queued one, the marker
+ * moves there and the release follows that commit's run:
+ *
+ * - still running → its own guard releases once it completes
+ * - already completed (its guard ran while the marker still pointed
+ *   here, and left it alone) → decide here, as that guard would have
+ * - no run at all (e.g. a `[skip ci]` commit) → release right away,
+ *   like the create-release check does
+ *
+ * Returns false when the release does not move (main did not move on,
+ * e.g. a run cancelled by hand) — the guard then handles the cancelled
+ * run as before: consume the marker and fail.
+ */
+const handOverCancelledRun = async (sha: string): Promise<boolean> => {
+  const head = await readRemoteRef(MAIN_BRANCH_REF);
+  if (!head || head === sha) {
+    return false;
+  }
+  try {
+    if (!(await isAncestor(sha, head))) {
+      return false;
+    }
+  } catch (error) {
+    console.log(
+      `could not confirm that main (${head}) contains ${sha}: ${error}`,
+    );
+    return false;
+  }
+  if (!(await swapMarker(sha, head))) {
+    setStepOutput("release", "false");
+    return true;
+  }
+  console.log(
+    `main workflow for ${sha} was cancelled and main moved on — queued release moved to ${head}`,
+  );
+  appendStepSummary(
+    `⏭️ The ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run for \`${sha}\` was cancelled (replaced by a newer run). ` +
+      `The queued release moved to \`${head}\` and follows its main workflow run.`,
+  );
+
+  const run = await getMainWorkflowRun(head);
+  if (run && run.status !== "completed") {
+    console.log(
+      `main workflow for ${head} is ${run.status.replace(/_/g, " ")} — its guard releases once it succeeds`,
+    );
+    setStepOutput("release", "false");
+    return true;
+  }
+  if (!(await swapMarker(head, null))) {
+    // the guard of the newer run consumed it
+    setStepOutput("release", "false");
+    return true;
+  }
+  if (!run) {
+    console.log(
+      `no main workflow run found for ${head} — releasing right away`,
+    );
+    appendStepSummary(
+      `ℹ️ No main workflow run found for \`${head}\` — releasing right away.`,
+    );
+    setStepOutput("release", "true");
+    return true;
+  }
+  decideRelease(head, run.conclusion ?? "unknown");
+  return true;
 };
