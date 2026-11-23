@@ -115,7 +115,7 @@ Each entry becomes its own job (`🔬 e2e`) in the `post-build` stage between bu
 - `services` (gitlab shape) are reachable by their alias as hostname. On github, `command` and `entrypoint` of a service are not supported
 - the job gets the build vars of the component (like the build and test jobs) plus `vars`, but **not** the runtime vars and secrets of the deployed env: post-build tests run before the deploy, also for merge requests, and should use their own services
 - `artifacts` (paths relative to the repository root) are uploaded also when the tests fail, so reports and screenshots are available for failed runs
-- post-build tests run in merge request and main branch pipelines, not in tagged releases (like lint and test). Disable a single test in an env with `env: { dev: { build: { postBuildTests: { e2e: false } } } }`
+- post-build tests run in merge request and main branch pipelines, not in tagged releases (like lint and test). Limit a test to some envs with `environments`, e.g. run the full e2e suite only on the main branch and not on every merge request push: `e2e: { command: "yarn e2e", environments: ["dev"] }`. This works for component and workspace builds; unknown env names fail the generation. Components can also disable a single test in an env with `env: { dev: { build: { postBuildTests: { e2e: false } } } }`
 
 All options of `test` (`jobImage`, `runnerVariables`, `artifacts`, `artifactsReports`, `allowFailure`) work for post-build tests too.
 

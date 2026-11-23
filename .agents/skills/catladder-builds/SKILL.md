@@ -121,8 +121,13 @@ build: {
 - It gets the build vars plus `vars`, **not** the deployed env's
   runtime vars/secrets — use services instead of the real database.
 - Artifacts are uploaded also when the job fails.
-- Not run in tagged releases. Disable one per env:
-  `env: { dev: { build: { postBuildTests: { e2e: false } } } }`.
+- Not run in tagged releases. Limit one to some envs with
+  `environments`, e.g. the full e2e suite only on the main branch, not
+  on every MR/PR push: `e2e: { command: "…", environments: ["dev"] }`
+  — works for component and workspace builds; unknown env names fail
+  the generation. (Components can also disable one per env:
+  `env: { dev: { build: { postBuildTests: { e2e: false } } } }`;
+  workspace builds have no env overrides, use `environments`.)
 - Names must not clash with other jobs of the component (e.g. `test`,
   `lint`) — generation fails with a clear error.
 - Workspace builds: on `builds.<ws>` they block the deploys of all

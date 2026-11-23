@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Config } from "../../types/config";
-import { getGitlabCompletePipeline } from "../../pipeline/generatePipelineFiles";
+import { getGitlabCompletePipeline } from "../..";
 
 const DEPLOY = {
   type: "google-cloudrun",
@@ -125,6 +125,74 @@ describe("postBuildTests", () => {
     expect(job.needs).toContainEqual({
       job: "app 🔨 docker | review ",
       artifacts: false,
+    });
+  });
+
+  describe("environments", () => {
+    const e2eJobs = async (config: Config) =>
+      (await jobNames(config))
+        .filter((n) => n.includes("🔬 e2e"))
+        .map((n) => n.trim());
+
+    it("limits a component test to the listed envs", async () => {
+      expect(
+        await e2eJobs({
+          ...BASE,
+          components: {
+            web: {
+              dir: "web",
+              build: {
+                type: "node",
+                postBuildTests: {
+                  e2e: { command: "yarn e2e", environments: ["dev"] },
+                },
+              },
+              deploy: DEPLOY,
+            },
+          },
+        }),
+      ).toEqual(["web 🔬 e2e | dev"]);
+    });
+
+    it("limits a workspace test to the listed envs", async () => {
+      expect(
+        await e2eJobs({
+          ...BASE,
+          builds: {
+            ws: {
+              type: "node",
+              postBuildTests: {
+                e2e: { command: "yarn e2e", environments: ["dev"] },
+              },
+            },
+          },
+          components: {
+            web: { dir: "web", build: { from: "ws" }, deploy: DEPLOY },
+          },
+        }),
+      ).toEqual(["🔸 ws 🔬 e2e | dev"]);
+    });
+
+    it("rejects unknown env names", async () => {
+      await expect(
+        e2eJobs({
+          ...BASE,
+          components: {
+            web: {
+              dir: "web",
+              build: {
+                type: "node",
+                postBuildTests: {
+                  e2e: { command: "yarn e2e", environments: ["deev"] },
+                },
+              },
+              deploy: DEPLOY,
+            },
+          },
+        }),
+      ).rejects.toThrow(
+        "postBuildTests.e2e.environments contains unknown env(s) deev",
+      );
     });
   });
 });

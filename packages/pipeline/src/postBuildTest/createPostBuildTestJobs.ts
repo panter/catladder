@@ -6,6 +6,7 @@ import {
   getPackageManagerInstall,
 } from "../build/node/packageManagerInstall";
 import { isOfBuildType } from "../build/types";
+import { getAllEnvsInAllComponents } from "../config/configruedEnvs";
 import { getRunnerImage } from "../runner";
 import type { ComponentContext, WorkspaceContext } from "../types/context";
 import type { Requirement } from "../types/jobs";
@@ -88,6 +89,34 @@ const getDefaultImage = (context: ComponentContext | WorkspaceContext) => {
 };
 
 /**
+ * whether a post-build test runs in the context's env (its
+ * `environments` list, all envs without one)
+ */
+const runsInEnv = (
+  context: ComponentContext | WorkspaceContext,
+  name: string,
+  test: PostBuildTestConfig,
+) => {
+  if (test.environments === undefined) {
+    return true;
+  }
+  if (!Array.isArray(test.environments)) {
+    throw new Error(
+      `${context.name}: postBuildTests.${name}.environments must be a list of env names, got: ${JSON.stringify(test.environments)}`,
+    );
+  }
+  // a typo would silently drop the test everywhere
+  const knownEnvs = getAllEnvsInAllComponents(context.fullConfig);
+  const unknown = test.environments.filter((env) => !knownEnvs.includes(env));
+  if (unknown.length > 0) {
+    throw new Error(
+      `${context.name}: postBuildTests.${name}.environments contains unknown env(s) ${unknown.join(", ")} (known: ${knownEnvs.join(", ")})`,
+    );
+  }
+  return test.environments.includes(context.env);
+};
+
+/**
  * jobs for `postBuildTests`: they run after the build in the `post-build`
  * stage, against the build artifacts, and act as quality gates, so a
  * failing post-build test blocks the deploy.
@@ -99,9 +128,11 @@ export const createPostBuildTestJobs = async (
   if (context.trigger === "taggedRelease") {
     return [];
   }
-  const tests = Object.entries(getPostBuildTestsConfig(context) ?? {}).filter(
-    (entry): entry is [string, PostBuildTestConfig] => entry[1] !== false,
-  );
+  const tests = Object.entries(getPostBuildTestsConfig(context) ?? {})
+    .filter(
+      (entry): entry is [string, PostBuildTestConfig] => entry[1] !== false,
+    )
+    .filter(([name, test]) => runsInEnv(context, name, test));
   if (tests.length === 0) {
     return [];
   }
