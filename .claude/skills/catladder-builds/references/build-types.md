@@ -32,7 +32,9 @@ generated pipeline files.
 
 `PostBuildTestConfig` (for `postBuildTests` entries): `TestJobCustom` with
 a required `command`, plus `services?: Services` (gitlab shape, reachable
-by alias) and `vars?: Record<string,string>`. The job gets the build
+by alias), `vars?: Record<string,string>` and `environments?: string[]`
+(env names the test runs in; default all non-tagged-release envs;
+unknown names fail generation). The job gets the build
 artifacts, the build vars and `vars` (not the deployed env's runtime
 vars), installs dependencies for node builds, and uploads `artifacts`
 also on failure.

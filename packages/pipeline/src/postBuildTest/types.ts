@@ -44,6 +44,18 @@ export type PostBuildTestConfig = TestJobCustom & {
    * merge requests, and should use their own services.
    */
   vars?: Record<string, string>;
+
+  /**
+   * the environments (env names) this test runs in, e.g. `["dev"]` to
+   * run an expensive e2e suite only on the main branch and not on every
+   * merge/pull request push. Works for component and workspace builds.
+   *
+   * Without it, the test runs in every env of a non-tagged-release
+   * pipeline. Unknown env names fail the generation.
+   *
+   * @example ["dev"]
+   */
+  environments?: string[];
 };
 
 /**
@@ -61,6 +73,7 @@ export type WithPostBuildTests = {
    *
    * Each entry becomes its own job, e.g. `{ e2e: { command: "pnpm test:e2e" } }`.
    * Post-build tests don't run in tagged-release pipelines (like lint and test).
+   * Limit a test to some envs with its `environments` option.
    */
   postBuildTests?: PostBuildTestsConfig;
 };
