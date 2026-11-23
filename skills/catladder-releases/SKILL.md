@@ -35,6 +35,11 @@ are generated, never hand-edited.
     when the main workflow for HEAD is green, queues the release when
     it is still running (the `🛠️ catladder release on green` workflow then
     picks it up on completion), and fails when the run concluded red.
+    With `pipelines.github.concurrency.main`, a pending main run can be
+    replaced by a newer push's run (it ends as _cancelled_): a release
+    queued for it moves on to the newer main commit and follows that
+    run instead of getting lost. A run cancelled by hand (main did not
+    move on) still drops the queued release — queue again.
 - **`auto`** — the release job runs automatically on every main-branch
   pipeline (it still no-ops when there is nothing to release).
 
