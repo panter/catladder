@@ -80,6 +80,38 @@ components would end up with the same service name, or when
 customerName/appName/env plus the project number already leave no room
 for it.
 
+## Revision and image retention
+
+After each deploy, catladder keeps the newest `imagesToKeep` images for the
+environment and component in Artifact Registry and removes older images.
+`imagesToKeep` defaults to `revisionsToKeep + 5`: 5 images outside production
+and 10 in production with the default revision settings.
+
+`revisionsToKeep` controls how many inactive Cloud Run revisions remain for
+rollback (default: 5 in production, 0 elsewhere). Image retention is separate:
+the extra images provide room for concurrent pipelines that have pushed an
+image but have not deployed it yet. Choose a larger retention count if more
+pipelines can overlap; a finite count cannot protect an unlimited backlog.
+
+```ts
+deploy: {
+  type: "google-cloudrun",
+  projectId: "your-google-cloud-project",
+  region: "europe-west6",
+  revisionsToKeep: 5,
+  imagesToKeep: 10,
+}
+```
+
+`imagesToKeep` must be a finite positive integer. Its effective value is at
+least `revisionsToKeep + 1`, even when a smaller value is configured. The shared
+build cache keeps its newest 3 images independently of this option.
+
+Different review apps use separate image paths, but pipelines for the same
+merge/pull request can overlap, so the same retention applies to review apps.
+Stopping an environment still removes all its deployment images; legacy review
+image cleanup is unchanged.
+
 ## Cloud SQL support
 
 1. Create a CloudSQL instance in the same project `your-google-cloud-project` (if you need support for cross-project apps, please raise an issue, as this would need an additional service account).  
