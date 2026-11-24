@@ -156,6 +156,15 @@ Log output goes to stdout; `--json` prints only a JSON array. It
 fails with a pointer to `project setup` / `catenv` when the declaration
 or the key file is missing. Review envs need `--review-slug`.
 
+Read-only IAM does not guarantee secret-free output. Application logs may
+contain secrets, and Cloud Run Admin Activity audit-log exposure of plain env
+values remains unverified (2026-11-24: no GCP project available). The `logs`
+preset is implemented, but its safety recommendation remains gated on that
+live check; `monitoring.viewer` notification-channel masking is also unverified.
+See the ADR `apps/docs/docs/adr/gcp-diagnosis-access-and-secret-exposure.md`
+and follow-up cat-q5o2 in the catladder repo. Do not describe these as verified
+secret-free access.
+
 The `vertex` preset grants `roles/aiplatform.user` (to call Vertex AI
 models, e.g. local evals). It is **not** read-only: it can use and bill
 every Vertex AI API of the project and create/change/delete Vertex AI
