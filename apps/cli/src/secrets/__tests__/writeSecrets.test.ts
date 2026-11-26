@@ -20,6 +20,12 @@ const { collectSecretTargets, getConfiguredGithubRepo, pushSecretsToGithub } =
     pushSecretsToGithub: vi.fn(),
   }));
 
+const { outsideCi } = vi.hoisted(() => ({ outsideCi: { value: false } }));
+vi.mock("@catladder/pipeline", async (importActual) => ({
+  ...(await importActual<Record<string, unknown>>()),
+  deliversRuntimeSecretsOutsideCi: () => outsideCi.value,
+}));
+
 vi.mock("../../config/getProjectConfig", () => ({
   getProjectConfig,
   getEnvironment,
@@ -52,6 +58,7 @@ const writes = [
 
 beforeEach(() => {
   vi.clearAllMocks();
+  outsideCi.value = false;
   getEnvironment.mockResolvedValue({
     secretEnvVarKeys: [{ key: "API_KEY" }],
     jobOnlyVars: {
@@ -143,5 +150,94 @@ describe("writeSecretsAndMirror", () => {
 
     expect(vaultWriteSecrets).toHaveBeenCalledTimes(1);
     expect(pushSecretsToGithub).not.toHaveBeenCalled();
+  });
+
+  describe("runtime-only secrets", () => {
+    const scoped = [
+      { key: "SESSION_SECRET", scopes: ["runtime"] },
+      { key: "DB_PASS", scopes: ["runtime", "local"] },
+      { key: "NPM_TOKEN", scopes: ["build"] },
+      { key: "API_KEY" },
+    ];
+    const scopedWrites = [
+      {
+        env: "dev",
+        componentName: "www",
+        secrets: {
+          SESSION_SECRET: "s",
+          DB_PASS: "d",
+          NPM_TOKEN: "n",
+          API_KEY: "a",
+        },
+      },
+    ];
+    beforeEach(() => {
+      getEnvironment.mockResolvedValue({
+        secretEnvVarKeys: scoped,
+        jobOnlyVars: {
+          build: { secretEnvVarKeys: [] },
+          deploy: { secretEnvVarKeys: [] },
+        },
+      });
+      getProjectConfig.mockResolvedValue(
+        config({
+          pipelines: { gitlab: true, github: true },
+          secrets: { vault: "bitwarden" },
+        }),
+      );
+    });
+
+    it("reaches the vault but not CI when the deploy delivers them outside CI", async () => {
+      outsideCi.value = true;
+      await writeSecretsAndMirror(io, scopedWrites);
+
+      expect(vaultWriteSecrets).toHaveBeenCalledWith(
+        "dev",
+        "www",
+        scopedWrites[0].secrets,
+        io,
+        {},
+      );
+      expect(upsertAllVariables).toHaveBeenCalledWith(
+        io,
+        { NPM_TOKEN: "n", API_KEY: "a" },
+        "dev",
+        "www",
+        true,
+      );
+      const pushed = pushSecretsToGithub.mock.calls[0][2].map(
+        (s: { name: string }) => s.name,
+      );
+      expect(pushed).toEqual(["CL_dev_www_NPM_TOKEN", "CL_dev_www_API_KEY"]);
+      const logs = io.log as ReturnType<typeof vi.fn>;
+      const text = logs.mock.calls.map((c) => c[0]).join("\n");
+      expect(text).toContain("dev:www:SESSION_SECRET");
+      expect(text).not.toContain('"s"');
+    });
+
+    it("skips the gitlab call when nothing is left to mirror", async () => {
+      outsideCi.value = true;
+      await writeSecretsAndMirror(io, [
+        { env: "dev", componentName: "www", secrets: { SESSION_SECRET: "s" } },
+      ]);
+      expect(upsertAllVariables).not.toHaveBeenCalled();
+      expect(pushSecretsToGithub).not.toHaveBeenCalled();
+    });
+
+    it("still mirrors runtime-only secrets with the real predicate and logs a note", async () => {
+      await writeSecretsAndMirror(io, scopedWrites);
+
+      expect(upsertAllVariables).toHaveBeenCalledWith(
+        io,
+        scopedWrites[0].secrets,
+        "dev",
+        "www",
+        true,
+      );
+      const logs = io.log as ReturnType<typeof vi.fn>;
+      expect(logs.mock.calls.map((c) => c[0]).join("\n")).toContain(
+        "still mirrored to CI",
+      );
+    });
   });
 });

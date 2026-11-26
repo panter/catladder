@@ -9,6 +9,7 @@ import type { IO } from "../core/types";
 import { isGhAuthenticated } from "../utils/github";
 import { upsertAllVariables } from "../utils/gitlab";
 import type { WriteSecretsOptions } from "../vault/types";
+import { partitionSecretsForCi } from "./ciDelivery";
 import {
   collectSecretTargets,
   getConfiguredGithubRepo,
@@ -70,10 +71,44 @@ const mirrorSecretsToCiBackends = async (
 ) => {
   const enabled = getEnabledPipelineTypes(config);
 
+  // runtime-only secrets need no CI variable when the deploy delivers
+  // them itself; the vault always got everything
+  const ciWrites: SecretsWrite[] = [];
+  const skippedKeys: string[] = [];
+  const keptKeys: string[] = [];
+  for (const write of writes) {
+    const { deliver, skipped, keptRuntimeOnly } = await partitionSecretsForCi(
+      config,
+      write.env,
+      write.componentName,
+      write.secrets,
+    );
+    ciWrites.push({ ...write, secrets: deliver });
+    skippedKeys.push(
+      ...skipped.map((k) => `${write.env}:${write.componentName}:${k}`),
+    );
+    keptKeys.push(
+      ...keptRuntimeOnly.map((k) => `${write.env}:${write.componentName}:${k}`),
+    );
+  }
+  if (skippedKeys.length > 0) {
+    io.log(
+      `skipping ${skippedKeys.length} runtime-only secrets for CI (kept in the vault): ${skippedKeys.join(", ")}`,
+    );
+  }
+  if (keptKeys.length > 0) {
+    io.log(
+      `note: runtime-only secrets are still mirrored to CI because the deploy reads them from CI: ${keptKeys.join(", ")}`,
+    );
+  }
+
   // gitlab mirror (unless gitlab is the vault itself, then it is
   // already written)
   if (getVaultConfig(config).type !== "gitlab" && enabled.includes("gitlab")) {
-    for (const { env, componentName, secrets } of writes) {
+    for (const { env, componentName, secrets } of ciWrites) {
+      if (Object.keys(secrets).length === 0) {
+        continue;
+      }
       await upsertAllVariables(
         io,
         secrets,
@@ -102,7 +137,7 @@ const mirrorSecretsToCiBackends = async (
       kinds.set(getSecretVarName(env, componentName, key), kind ?? "secret"),
     );
   }
-  const secrets = writes.flatMap(({ env, componentName, secrets }) =>
+  const secrets = ciWrites.flatMap(({ env, componentName, secrets }) =>
     Object.entries(secrets).map(([key, value]) => {
       const name = getSecretVarName(env, componentName, key);
       return {
