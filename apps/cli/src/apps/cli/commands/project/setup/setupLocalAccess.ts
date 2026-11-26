@@ -1,5 +1,6 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import {
+  getLocalAccessDb,
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
   getVaultConfig,
@@ -8,12 +9,14 @@ import {
 import { getProjectConfig } from "../../../../../config/getProjectConfig";
 import type { IO } from "../../../../../core/types";
 import { syncLocalAccessServiceAccount } from "../../../../../gcloud/localAccess";
+import { syncLocalAccessDb } from "../../../../../gcloud/localAccessDb";
 
 /**
  * provisions the local access (`localAccess` in catladder.ts)
  * of a google cloud run component/env: a dedicated service account with
- * exactly the declared bindings and its key in the secret store. Also
- * removes what is no longer declared.
+ * exactly the declared bindings and its key in the secret store, and for
+ * `db: "readonly"` a select-only postgres role. Also removes what is no
+ * longer declared.
  */
 export const setupLocalAccess = async (
   instance: IO,
@@ -25,6 +28,13 @@ export const setupLocalAccess = async (
   const roles = getLocalAccessGcpRoles(projectConfig, context.env);
   // validates `credentialsEnvVar` (catenv silently skips invalid ones)
   getLocalAccessGcpCredentialsEnvVars(projectConfig, context.name);
+
+  const dbDeclared = !!getLocalAccessDb(projectConfig, context.env);
+  if (dbDeclared && !config.cloudSql) {
+    throw new Error(
+      `localAccess (${context.env}:${context.name}): db access needs a component with \`cloudSql\``,
+    );
+  }
 
   if (roles.length > 0 && getVaultConfig(projectConfig).type === "gitlab") {
     // the gitlab vault stores secrets as CI variables available to every
@@ -41,4 +51,13 @@ export const setupLocalAccess = async (
     config.projectId,
     roles,
   );
+
+  if (config.cloudSql) {
+    await syncLocalAccessDb(
+      instance,
+      context,
+      config.cloudSql.instanceConnectionName,
+      dbDeclared,
+    );
+  }
 };

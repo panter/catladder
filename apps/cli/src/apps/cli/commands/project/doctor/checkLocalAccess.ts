@@ -1,6 +1,7 @@
 import type { ComponentContext, Config } from "@catladder/pipeline";
 import {
   diffRoleBindings,
+  getLocalAccessDb,
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
   getVaultConfig,
@@ -35,6 +36,9 @@ export const checkLocalAccess = async (
     try {
       declared = getLocalAccessGcpRoles(config, context.env);
       getLocalAccessGcpCredentialsEnvVars(config, context.name);
+      if (getLocalAccessDb(config, context.env) && !deployConfig.cloudSql) {
+        throw new Error("db access needs a component with `cloudSql`");
+      }
     } catch (e) {
       return { label, invalid: e.message as string };
     }

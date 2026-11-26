@@ -1,12 +1,16 @@
 import type { Config } from "@catladder/pipeline";
 import {
   getEnvironment,
+  getLocalAccessDbSecretName,
   getLocalAccessGcpSecretName,
   getSecretVarName,
   getVaultConfig,
 } from "@catladder/pipeline";
 import type { IO } from "../core/types";
-import { getDeclaredLocalAccessEnvs } from "../localAccess/declared";
+import {
+  getDeclaredLocalAccessDbEnvs,
+  getDeclaredLocalAccessEnvs,
+} from "../localAccess/declared";
 import { BitwardenVault } from "./BitwardenVault";
 import type { CachedSecrets } from "./cache";
 import {
@@ -186,6 +190,9 @@ export class VaultManager {
       // of any env's vars, but belong to the cached local secrets
       ...getDeclaredLocalAccessEnvs(this.config, componentName).map(
         getLocalAccessGcpSecretName,
+      ),
+      ...getDeclaredLocalAccessDbEnvs(this.config, componentName).map(
+        getLocalAccessDbSecretName,
       ),
     ];
   }

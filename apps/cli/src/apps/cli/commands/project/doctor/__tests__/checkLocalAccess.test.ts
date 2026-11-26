@@ -81,6 +81,40 @@ describe("checkLocalAccess", () => {
     expect(out.join("\n")).toMatch(/fail:.*conditional roles/);
   });
 
+  it("expects the cloudsql client role for db access", async () => {
+    const withSql = {
+      ...cloudRun,
+      cloudSql: { instanceConnectionName: "a:b:c" },
+    };
+    const c = config({
+      localAccess: { gcp: { presets: ["logs"] }, db: "readonly" },
+      components: { web: { dir: ".", build: false, deploy: withSql } as any },
+    });
+    const ctx = { ...context, deploy: { config: withSql } } as any;
+    const out: string[] = [];
+    const report = {
+      section: () => {},
+      ok: (m: string) => out.push(`ok:${m}`),
+      warn: (m: string) => out.push(`warn:${m}`),
+      fail: (m: string) => out.push(`fail:${m}`),
+    } as any;
+    const inspector = {
+      getUnconditionalRolesOfMember: async () => ["roles/logging.viewer"],
+      getConditionalRolesOfMember: async () => [],
+    } as any;
+    await checkLocalAccess(report, c, [ctx], inspector);
+    expect(out.join("\n")).toMatch(
+      /fail:.*missing roles: roles\/cloudsql.client/,
+    );
+  });
+
+  it("fails db access on a component without cloudSql", async () => {
+    const out = await run(
+      config({ localAccess: { gcp: { presets: ["logs"] }, db: "readonly" } }),
+    );
+    expect(out.join("\n")).toMatch(/fail:.*needs a component with `cloudSql`/);
+  });
+
   it("reports a missing account", async () => {
     state.exists = false;
     expect((await run(config())).join("\n")).toMatch(/fail:.*does not exist/);
