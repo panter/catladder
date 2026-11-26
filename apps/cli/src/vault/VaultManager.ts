@@ -7,14 +7,13 @@ import {
 } from "@catladder/pipeline";
 import type { IO } from "../core/types";
 import { getDeclaredLocalAccessEnvs } from "../localAccess/declared";
-import { BitwardenVault } from "./BitwardenVault";
 import type { CachedSecrets } from "./cache";
 import {
   readSecretsCache,
   updateSecretsCache,
   writeSecretsCache,
 } from "./cache";
-import { GitlabVault } from "./GitlabVault";
+import { createVault } from "./createVault";
 import type { SecretsMode, SecretsVault, WriteSecretsOptions } from "./types";
 
 /**
@@ -57,20 +56,14 @@ export class VaultManager {
   }
 
   private createVault(): SecretsVault {
-    const vaultConfig = getVaultConfig(this.config);
-    switch (vaultConfig.type) {
-      case "gitlab":
-        return new GitlabVault();
-      case "bitwarden":
-        return new BitwardenVault(
-          this.config,
-          vaultConfig,
-          // unlock prompts need a mode that allows them AND an IO that
-          // can actually prompt (catenv under direnv/turbo/CI cannot)
-          (this.mode === "auto" || this.mode === "refresh") &&
-            (this.io?.interactive ?? true),
-        );
-    }
+    return createVault(
+      this.config,
+      getVaultConfig(this.config),
+      // unlock prompts need a mode that allows them AND an IO that
+      // can actually prompt (catenv under direnv/turbo/CI cannot)
+      (this.mode === "auto" || this.mode === "refresh") &&
+        (this.io?.interactive ?? true),
+    );
   }
 
   /**
