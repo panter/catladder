@@ -156,6 +156,11 @@ Log output goes to stdout; `--json` prints only a JSON array. It
 fails with a pointer to `project setup` / `catenv` when the declaration
 or the key file is missing. Review envs need `--review-slug`.
 
+Read-only IAM does not guarantee secret-free output. Application logs may
+contain secrets. Whether Cloud Run Admin Activity audit logs expose plain env
+values, and whether `monitoring.viewer` masks notification-channel secrets, is
+not verified. Do not describe the `logs` preset as verified secret-free access.
+
 The `vertex` preset grants `roles/aiplatform.user` (to call Vertex AI
 models, e.g. local evals). It is **not** read-only: it can use and bill
 every Vertex AI API of the project and create/change/delete Vertex AI
