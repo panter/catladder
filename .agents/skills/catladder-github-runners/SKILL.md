@@ -39,8 +39,10 @@ pipelines: {
       // per environment — wins over `jobs` and `default`
       environments: { prod: "ubuntu-latest" },
       // catladder's housekeeping jobs (image check, ✅ aggregate checks,
-      // review deploy triggers/guards, release + changeset check)
+      // review deploy triggers/guards, changeset check)
       light: { provider: "celesto", size: "standard" },
+      // the release jobs (create release, release on green) — default: light
+      release: "ubuntu-latest",
     },
   },
 },
@@ -58,9 +60,17 @@ name without emoji, lowercased: `app`, `test`, `lint`, `audit`,
 `docker`, `deploy`, `verify`, `stop`, … (`🧪 test` → `test`).
 `light` defaults to the provider's small size (blacksmith 2 vCPU,
 celesto `standard`) or to `default` when that is a literal label.
-Housekeeping jobs ignore `environments` and `jobs` — set `light`
-explicitly if they must stay on github too (the release job sees the
-release credentials).
+`release` defaults to `light`. Housekeeping and release jobs ignore
+`environments` and `jobs`; set `release` explicitly to keep the release
+jobs (they push with the release deploy key and publish) on github's
+runners.
+
+Housekeeping jobs run for seconds, but github bills every job as at
+least one full minute, so a busy repository pays for hundreds of these
+"minutes" a day. Moving `light` to a provider's smallest size (celesto
+`micro`, blacksmith 2 vCPU) removes most of the remaining github bill;
+the price is the provider's pickup time (10–50 s on celesto) on every
+step of the review deploy chain.
 
 Only x64 Ubuntu runners are offered as providers: catladder's job
 images are built x64-only. Use a literal label for anything else.
@@ -129,7 +139,8 @@ github's runners and run the rest cheaply:
 runner: {
   default: { provider: "celesto" },
   environments: { prod: "ubuntu-latest", stage: "ubuntu-latest" },
-  light: "ubuntu-latest", // release job: deploy key / npm credentials
+  light: { provider: "celesto", size: "micro" },
+  release: "ubuntu-latest", // release jobs: deploy key / npm credentials
 },
 ```
 

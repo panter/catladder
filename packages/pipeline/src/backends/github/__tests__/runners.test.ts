@@ -184,4 +184,88 @@ describe("github runner config in generated workflows", () => {
     }
     expect(jobs["catladder-review.yml#api-test-review"]).toBe("celesto-memory");
   });
+
+  describe("release runner", () => {
+    const releaseWorkflowsWith = async (
+      when: "auto" | "manual",
+      runner: GithubRunnerConfig,
+    ) =>
+      Object.fromEntries(
+        Object.entries(
+          await new GithubBackend().createWorkflows({
+            ...baseConfig,
+            releases: { when },
+            pipelines: { github: { runner } },
+          } as Config),
+        ).flatMap(([file, workflow]) =>
+          Object.entries(workflow.jobs).map(([id, job]) => [
+            `${file}#${id}`,
+            job["runs-on"],
+          ]),
+        ),
+      );
+
+    it("puts the manual release workflows on `release`, housekeeping on `light`", async () => {
+      const jobs = await releaseWorkflowsWith("manual", {
+        default: { provider: "celesto" },
+        light: { provider: "celesto", size: "micro" },
+        release: "ubuntu-latest",
+      });
+      const releaseJobs = Object.entries(jobs).filter(
+        ([key]) =>
+          key.startsWith("catladder-create-release.yml#") ||
+          key.startsWith("catladder-release-on-green.yml#"),
+      );
+      expect(releaseJobs.length).toBeGreaterThan(1);
+      for (const [, label] of releaseJobs) {
+        expect(label).toBe("ubuntu-latest");
+      }
+      const housekeeping = Object.entries(jobs).filter(
+        ([key]) =>
+          isHousekeeping(key) &&
+          !releaseJobs.some(([releaseKey]) => releaseKey === key),
+      );
+      expect(housekeeping.length).toBeGreaterThan(0);
+      for (const [, label] of housekeeping) {
+        expect(label).toBe("celesto-micro");
+      }
+    });
+
+    it("puts the auto release job of the main workflow on `release`", async () => {
+      const jobs = await releaseWorkflowsWith("auto", {
+        default: { provider: "celesto" },
+        light: { provider: "celesto", size: "micro" },
+        release: "ubuntu-latest",
+      });
+      expect(jobs["catladder-main.yml#create-release"]).toBe("ubuntu-latest");
+      expect(jobs["catladder-create-release.yml#create-release"]).toBe(
+        "ubuntu-latest",
+      );
+      const mainHousekeeping = Object.entries(jobs).filter(
+        ([key]) =>
+          key.startsWith("catladder-main.yml#") &&
+          isHousekeeping(key) &&
+          key !== "catladder-main.yml#create-release",
+      );
+      for (const [, label] of mainHousekeeping) {
+        expect(label).toBe("celesto-micro");
+      }
+    });
+
+    it("defaults to `light`", async () => {
+      const jobs = await releaseWorkflowsWith("manual", {
+        default: { provider: "celesto" },
+        light: "ubuntu-latest",
+      });
+      expect(jobs["catladder-create-release.yml#create-release"]).toBe(
+        "ubuntu-latest",
+      );
+      const withoutLight = await releaseWorkflowsWith("manual", {
+        provider: "celesto",
+      });
+      expect(withoutLight["catladder-create-release.yml#create-release"]).toBe(
+        "celesto-standard",
+      );
+    });
+  });
 });
