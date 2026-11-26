@@ -103,6 +103,44 @@ export type DeployConfigCloudRunCloudSql = {
   };
 };
 
+/**
+ * the identity a cloud run service, job or worker pool runs as (passed
+ * as `--service-account`). Without it, cloud run uses the project's
+ * default compute service account, which usually has `roles/editor`.
+ *
+ * - `"<email>"`: an existing service account, managed outside catladder
+ * - `true` / `{ roles, bucketRoles }`: a service account managed by
+ *   catladder: `catladder project setup` creates
+ *   `cl-r-<customer>-<app>-<env>-<component>` and binds the roles the
+ *   config implies (`roles/cloudsql.client` with `cloudSql`, bucket
+ *   object access for cloud storage `volumes`) plus the given ones
+ * - `false` / unset: the default compute service account
+ */
+export type DeployConfigCloudRunRuntimeServiceAccount =
+  | string
+  | boolean
+  | DeployConfigCloudRunManagedRuntimeServiceAccount;
+
+export type DeployConfigCloudRunManagedRuntimeServiceAccount = {
+  /**
+   * additional project-level roles, e.g. `["roles/aiplatform.user"]`
+   */
+  roles?: string[];
+  /**
+   * roles on individual cloud storage buckets, keyed by bucket name,
+   * e.g. `{ "my-media-bucket": ["roles/storage.objectUser"] }`
+   */
+  bucketRoles?: Record<string, string[]>;
+};
+
+export type DeployConfigCloudRunWithRuntimeServiceAccount = {
+  /**
+   * email of the service account this one runs as, overrides the
+   * deploy config's `runtimeServiceAccount`
+   */
+  runtimeServiceAccount?: string;
+};
+
 type Memory = `${number}${"M" | "G" | "Mi" | "Gi"}`;
 type Cpu = 1 | 2 | 4 | 6 | 8;
 export type DeployConfigCloudRunService = {
@@ -239,7 +277,8 @@ export type DeployConfigCloudRunService = {
         livenessProbe: false | DeployConfigCloudRunProbe;
       };
 } & DeployConfigCloudRunWithVolumes &
-  DeployConfigCloudRunNetworkConfig;
+  DeployConfigCloudRunNetworkConfig &
+  DeployConfigCloudRunWithRuntimeServiceAccount;
 
 export const defaultStartupProbe: DeployConfigCloudRunProbe = {
   type: "http1",
@@ -380,7 +419,8 @@ export type DeployConfigCloudRunJobBase = {
    */
   maxRetries?: number;
 } & DeployConfigCloudRunWithVolumes &
-  DeployConfigCloudRunNetworkConfig;
+  DeployConfigCloudRunNetworkConfig &
+  DeployConfigCloudRunWithRuntimeServiceAccount;
 
 type Minute = string;
 type Hour = string;
@@ -480,7 +520,8 @@ export type DeployConfigCloudRunWorkerPool = {
    */
   gpuType?: string;
 } & DeployConfigCloudRunWithVolumes &
-  DeployConfigCloudRunNetworkConfig;
+  DeployConfigCloudRunNetworkConfig &
+  DeployConfigCloudRunWithRuntimeServiceAccount;
 
 export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
   /**
@@ -534,6 +575,14 @@ export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
    * defaults to 5 for prod envs, 0 for every other environment
    */
   revisionsToKeep?: number;
+
+  /**
+   * the service account the services, jobs and worker pools run as.
+   * See {@link DeployConfigCloudRunRuntimeServiceAccount}.
+   *
+   * defaults to the project's default compute service account
+   */
+  runtimeServiceAccount?: DeployConfigCloudRunRuntimeServiceAccount;
 
   /**
    * add cloudSql

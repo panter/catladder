@@ -19,7 +19,10 @@ export const getWorkerPoolDeployScript = (
   workerPool: DeployConfigCloudRunWorkerPool,
   nameSuffix: string,
 ) => {
-  const commonDeployArgs = getCommonDeployArgs(context);
+  const commonDeployArgs = getCommonDeployArgs(
+    context,
+    workerPool.runtimeServiceAccount,
+  );
 
   const serviceName = getServiceName(context);
 
