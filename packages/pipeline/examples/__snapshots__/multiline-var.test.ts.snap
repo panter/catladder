@@ -364,6 +364,8 @@ catladder-main.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app1/.env app1/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app1/__build_info.json app1/.next app1/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -371,7 +373,7 @@ catladder-main.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app1-app-dev.tar
             else
-              tar -cf catladder-artifacts-app1-app-dev.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app1-app-dev.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -586,6 +588,8 @@ catladder-main.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app2/.env app2/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app2/__build_info.json app2/.next app2/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -593,7 +597,7 @@ catladder-main.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app2-app-dev.tar
             else
-              tar -cf catladder-artifacts-app2-app-dev.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app2-app-dev.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -796,6 +800,8 @@ catladder-main.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in kube/.env kube/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in kube/__build_info.json kube/.next kube/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -803,7 +809,7 @@ catladder-main.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-kube-app-dev.tar
             else
-              tar -cf catladder-artifacts-kube-app-dev.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-kube-app-dev.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1098,6 +1104,8 @@ catladder-review.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app1/.env app1/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app1/__build_info.json app1/.next app1/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1105,7 +1113,7 @@ catladder-review.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app1-app-review.tar
             else
-              tar -cf catladder-artifacts-app1-app-review.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app1-app-review.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1320,6 +1328,8 @@ catladder-review.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app2/.env app2/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app2/__build_info.json app2/.next app2/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1327,7 +1337,7 @@ catladder-review.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app2-app-review.tar
             else
-              tar -cf catladder-artifacts-app2-app-review.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app2-app-review.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1530,6 +1540,8 @@ catladder-review.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in kube/.env kube/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in kube/__build_info.json kube/.next kube/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1537,7 +1549,7 @@ catladder-review.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-kube-app-review.tar
             else
-              tar -cf catladder-artifacts-kube-app-review.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-kube-app-review.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1765,6 +1777,8 @@ catladder-release.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app1/.env app1/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app1/__build_info.json app1/.next app1/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1772,7 +1786,7 @@ catladder-release.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app1-app-stage.tar
             else
-              tar -cf catladder-artifacts-app1-app-stage.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app1-app-stage.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1885,6 +1899,8 @@ catladder-release.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app2/.env app2/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app2/__build_info.json app2/.next app2/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1892,7 +1908,7 @@ catladder-release.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app2-app-stage.tar
             else
-              tar -cf catladder-artifacts-app2-app-stage.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app2-app-stage.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -2002,6 +2018,8 @@ catladder-release.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in kube/.env kube/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in kube/__build_info.json kube/.next kube/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -2009,7 +2027,7 @@ catladder-release.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-kube-app-stage.tar
             else
-              tar -cf catladder-artifacts-kube-app-stage.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-kube-app-stage.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -2485,6 +2503,8 @@ catladder-deploy.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app1/.env app1/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app1/__build_info.json app1/.next app1/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -2492,7 +2512,7 @@ catladder-deploy.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app1-app-prod.tar
             else
-              tar -cf catladder-artifacts-app1-app-prod.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app1-app-prod.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -2608,6 +2628,8 @@ catladder-deploy.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in app2/.env app2/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in app2/__build_info.json app2/.next app2/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -2615,7 +2637,7 @@ catladder-deploy.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-app2-app-prod.tar
             else
-              tar -cf catladder-artifacts-app2-app-prod.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-app2-app-prod.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -2728,6 +2750,8 @@ catladder-deploy.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in kube/.env kube/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in kube/__build_info.json kube/.next kube/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -2735,7 +2759,7 @@ catladder-deploy.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-kube-app-prod.tar
             else
-              tar -cf catladder-artifacts-kube-app-prod.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-kube-app-prod.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts

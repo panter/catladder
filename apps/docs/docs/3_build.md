@@ -341,8 +341,10 @@ const config = {
         jobs: { test: { provider: "celesto", size: "large" } },
         // per environment, wins over jobs and default
         environments: { prod: "ubuntu-latest" },
-        // catladder's housekeeping jobs (image check, ✅ checks, release)
+        // catladder's housekeeping jobs (image check, ✅ checks, triggers)
         light: { provider: "celesto", size: "standard" },
+        // the release jobs (create release, release on green)
+        release: "ubuntu-latest",
       },
     },
   },
@@ -358,9 +360,9 @@ A plain value is the shorthand for `default`: `runner: { provider: "blacksmith" 
 | `{ provider: "blacksmith", vcpu? }` | `blacksmith-<vcpu>vcpu-ubuntu-2404` (2 default, 4, 8, 16, 32)        |
 | `{ provider: "celesto", size? }`    | `celesto-<size>` (micro, small, standard, memory default, large, xl) |
 
-`light` defaults to the provider's small size (blacksmith 2 vCPU, celesto `standard`), or to `default` when that is a literal label.
+`light` defaults to the provider's small size (blacksmith 2 vCPU, celesto `standard`), or to `default` when that is a literal label. `release` defaults to `light`. GitHub bills every job as at least one minute, so many short housekeeping jobs add up; a provider's smallest size for `light` (celesto `micro`) avoids that at the cost of the provider's pickup time.
 
-**Runners see every secret of the jobs they run.** GitHub delivers secrets and env vars decrypted to the runner machine, so choosing a provider is a data-protection decision (region, subprocessors, the customer's DPA). Keep the environments whose secrets matter on github's runners with `environments`, and set `light` too if the release job's credentials matter. The provider's GitHub App must be installed on the repository. The `catladder-github-runners` agent skill has the full setup, cost estimation and checklist.
+**Runners see every secret of the jobs they run.** GitHub delivers secrets and env vars decrypted to the runner machine, so choosing a provider is a data-protection decision (region, subprocessors, the customer's DPA). Keep the environments whose secrets matter on github's runners with `environments`, and set `release` (the release jobs push with the release deploy key) to `ubuntu-latest` as well. The provider's GitHub App must be installed on the repository. The `catladder-github-runners` agent skill has the full setup, cost estimation and checklist.
 
 GitLab output is unchanged.
 

@@ -115,13 +115,16 @@ export const githubRunnerJobKey = (jobName: string) =>
  *   get their environment's `environments` entry, else the `jobs` entry
  *   matching `<component>/<job>` or `<job>`, else `default`
  * - catladder's housekeeping jobs (image check, ✅ aggregate checks,
- *   review deploy triggers/guards, release jobs) get `light`
+ *   review deploy triggers/guards) get `light`
+ * - the release jobs (create-release, release-on-green) get `release`,
+ *   else `light`
  *
  * Without configuration every job keeps github's `ubuntu-latest`.
  */
 export class GithubRunners {
   private readonly defaultLabel: string;
   private readonly lightLabel: string;
+  private readonly releaseLabel: string;
   private readonly jobLabels: Map<string, string>;
   private readonly envLabels: Map<string, string>;
 
@@ -142,6 +145,10 @@ export class GithubRunners {
       options.light ?? lightRunnerFor(defaultRunner),
       `${OPTION_PATH}.light`,
     );
+    this.releaseLabel =
+      options.release === undefined
+        ? this.lightLabel
+        : githubRunnerLabel(options.release, `${OPTION_PATH}.release`);
     this.jobLabels = new Map(
       Object.entries(options.jobs ?? {}).map(([key, runner]) => {
         const normalized = key
@@ -182,5 +189,10 @@ export class GithubRunners {
   /** the runner of catladder's housekeeping jobs */
   get light(): string {
     return this.lightLabel;
+  }
+
+  /** the runner of the release jobs (they hold the release deploy key) */
+  get release(): string {
+    return this.releaseLabel;
   }
 }

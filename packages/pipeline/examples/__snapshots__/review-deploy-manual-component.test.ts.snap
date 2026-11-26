@@ -356,6 +356,8 @@ catladder-main.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in api/.env api/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in api/__build_info.json api/.next api/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -363,7 +365,7 @@ catladder-main.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-api-app-dev.tar
             else
-              tar -cf catladder-artifacts-api-app-dev.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-api-app-dev.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -578,6 +580,8 @@ catladder-main.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in storybook/.env storybook/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in storybook/__build_info.json storybook/.next storybook/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -585,7 +589,7 @@ catladder-main.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-storybook-app-dev.tar
             else
-              tar -cf catladder-artifacts-storybook-app-dev.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-storybook-app-dev.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -824,6 +828,8 @@ catladder-deploy-review.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in storybook/.env storybook/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in storybook/__build_info.json storybook/.next storybook/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -831,7 +837,7 @@ catladder-deploy-review.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-storybook-app-review.tar
             else
-              tar -cf catladder-artifacts-storybook-app-review.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-storybook-app-review.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - &a9
@@ -1157,6 +1163,8 @@ catladder-review.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in api/.env api/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in api/__build_info.json api/.next api/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1164,7 +1172,7 @@ catladder-review.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-api-app-review.tar
             else
-              tar -cf catladder-artifacts-api-app-review.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-api-app-review.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1488,6 +1496,8 @@ catladder-release.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in api/.env api/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in api/__build_info.json api/.next api/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1495,7 +1505,7 @@ catladder-release.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-api-app-stage.tar
             else
-              tar -cf catladder-artifacts-api-app-stage.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-api-app-stage.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1608,6 +1618,8 @@ catladder-release.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in storybook/.env storybook/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in storybook/__build_info.json storybook/.next storybook/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1615,7 +1627,7 @@ catladder-release.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-storybook-app-stage.tar
             else
-              tar -cf catladder-artifacts-storybook-app-stage.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-storybook-app-stage.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -1927,6 +1939,8 @@ catladder-deploy.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in api/.env api/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in api/__build_info.json api/.next api/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -1934,7 +1948,7 @@ catladder-deploy.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-api-app-prod.tar
             else
-              tar -cf catladder-artifacts-api-app-prod.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-api-app-prod.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts
@@ -2050,6 +2064,8 @@ catladder-deploy.yml:
           if: always()
           run: |-
             shopt -s nullglob globstar
+            excludes=$(mktemp)
+            for path in storybook/.env storybook/.next/cache/**/*; do printf '%s\\n' "$path" >> "$excludes"; done
             paths=()
             for path in storybook/__build_info.json storybook/.next storybook/dist; do
               if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -2057,7 +2073,7 @@ catladder-deploy.yml:
             if [ \${#paths[@]} -eq 0 ]; then
               head -c 10240 /dev/zero > catladder-artifacts-storybook-app-prod.tar
             else
-              tar -cf catladder-artifacts-storybook-app-prod.tar -- "\${paths[@]}"
+              tar -cf catladder-artifacts-storybook-app-prod.tar -X "$excludes" -- "\${paths[@]}"
             fi
           shell: bash
         - name: Upload artifacts

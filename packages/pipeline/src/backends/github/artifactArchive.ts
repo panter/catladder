@@ -55,15 +55,28 @@ export const createArtifactUploadSteps = (
   paths: string[],
   condition?: string,
   retentionDays?: number,
+  exclude: string[] = [],
 ): GithubStep[] => {
   const archive = artifactArchiveFile(jobId);
   const ifCondition = condition ? { if: condition } : {};
+  // gitlab's `artifacts.exclude` (e.g. `.next/cache/**/*` of node
+  // builds): the globs are expanded like the paths and handed to tar as
+  // an exclude list — excluding a directory drops its whole subtree
+  const excludeLines =
+    exclude.length > 0
+      ? [
+          "excludes=$(mktemp)",
+          `for path in ${exclude.join(" ")}; do printf '%s\\n' "$path" >> "$excludes"; done`,
+        ]
+      : [];
+  const excludeArg = exclude.length > 0 ? ' -X "$excludes"' : "";
   return [
     {
       name: "Archive artifacts",
       ...ifCondition,
       run: [
         "shopt -s nullglob globstar",
+        ...excludeLines,
         "paths=()",
         // unquoted on purpose: artifact paths may be globs. Non-matching
         // globs vanish (nullglob), missing literal paths are skipped —
@@ -77,7 +90,7 @@ export const createArtifactUploadSteps = (
         // create one, and zero blocks are what an empty tar is
         `  head -c 10240 /dev/zero > ${archive}`,
         "else",
-        `  tar -cf ${archive} -- "\${paths[@]}"`,
+        `  tar -cf ${archive}${excludeArg} -- "\${paths[@]}"`,
         "fi",
       ].join("\n"),
       shell: "bash",

@@ -545,6 +545,7 @@ export const makeGithubJob = (
                 ? "failure()"
                 : undefined,
             resolveArtifactRetentionDays(job.artifacts, artifactRetentionDays),
+            job.artifacts?.exclude ?? [],
           )
         : []),
     ],

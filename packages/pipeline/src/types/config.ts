@@ -505,12 +505,26 @@ export type GithubRunnerOptions = {
   default?: GithubRunner;
   /**
    * runner of catladder's housekeeping jobs (image check, ✅ aggregate
-   * checks, review deploy triggers, release jobs).
+   * checks, review deploy triggers and guards, the changeset check).
+   * They run for seconds, so a provider's smallest size usually fits;
+   * the release jobs have their own option, `release`.
    *
    * @default the provider's small size (blacksmith 2 vCPU, celesto
    * "standard"), or `default` when that is a literal label
    */
   light?: GithubRunner;
+  /**
+   * runner of the release jobs: the `create-release` job (of the main
+   * workflow with `releases.when: "auto"`, of the 🚀 create release
+   * workflow otherwise) and the release-on-green workflow. They push
+   * with the release deploy key and publish, so this is where to keep
+   * github's `ubuntu-latest` when `light` moves to a third-party
+   * provider.
+   *
+   * @default `light`
+   * @example "ubuntu-latest"
+   */
+  release?: GithubRunner;
   /**
    * per-job runners, keyed by the job name without emoji (`test`,
    * `lint`, `app`, `docker`, `deploy`, `verify`, `audit`, `stop`, …),

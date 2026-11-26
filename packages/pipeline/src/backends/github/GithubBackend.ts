@@ -187,6 +187,8 @@ export class GithubBackend implements PipelineBackend {
     // ids of component/workspace jobs; every other job is catladder
     // housekeeping and runs on the light runner
     const contextJobIds = new Set<string>();
+    // release jobs per workflow file: they get the release runner
+    const releaseJobIds = new Map<string, Set<string>>();
 
     // per-pipeline-type variables (pipelines.github.runnerVariables);
     // workflow-level env, so job-level runnerVariables take precedence.
@@ -395,15 +397,29 @@ export class GithubBackend implements PipelineBackend {
       if (trigger === "mainBranch") {
         // auto release mode: the release job runs at the end of the
         // main workflow itself
-        Object.assign(
-          jobs,
-          getGithubReleaseJobs(config, Object.keys(jobs), images),
+        const releaseJobs = getGithubReleaseJobs(
+          config,
+          Object.keys(jobs),
+          images,
+        );
+        Object.assign(jobs, releaseJobs);
+        releaseJobIds.set(
+          `${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`,
+          new Set(Object.keys(releaseJobs)),
         );
 
         // the dispatch workflow to trigger a release by hand (with a
         // force checkbox where the method distinguishes it)
-        workflows[`${GENERATED_FILE_PREFIX}create-release.yml`] =
-          getGithubCreateReleaseWorkflow(config, images, workflowEnv);
+        const createRelease = getGithubCreateReleaseWorkflow(
+          config,
+          images,
+          workflowEnv,
+        );
+        workflows[`${GENERATED_FILE_PREFIX}create-release.yml`] = createRelease;
+        releaseJobIds.set(
+          `${GENERATED_FILE_PREFIX}create-release.yml`,
+          new Set(Object.keys(createRelease.jobs)),
+        );
 
         // manual release mode: the workflow that runs a queued release
         // once the main workflow completed green
@@ -416,6 +432,10 @@ export class GithubBackend implements PipelineBackend {
         if (releaseOnGreen) {
           workflows[`${GENERATED_FILE_PREFIX}release-on-green.yml`] =
             releaseOnGreen;
+          releaseJobIds.set(
+            `${GENERATED_FILE_PREFIX}release-on-green.yml`,
+            new Set(Object.keys(releaseOnGreen.jobs)),
+          );
         }
       }
 
@@ -563,9 +583,12 @@ export class GithubBackend implements PipelineBackend {
       };
     }
 
-    for (const workflow of Object.values(workflows)) {
+    for (const [file, workflow] of Object.entries(workflows)) {
+      const releaseIds = releaseJobIds.get(file);
       for (const [id, job] of Object.entries(workflow.jobs)) {
-        if (!contextJobIds.has(id)) {
+        if (releaseIds?.has(id)) {
+          job["runs-on"] = runners.release;
+        } else if (!contextJobIds.has(id)) {
           job["runs-on"] = runners.light;
         }
       }

@@ -99,6 +99,8 @@ jobs:
         if: always()
         run: |-
           shopt -s nullglob globstar
+          excludes=$(mktemp)
+          for path in apps/cli/.next/cache/**/* packages/bash/.next/cache/**/* packages/pipeline/.next/cache/**/*; do printf '%s\n' "$path" >> "$excludes"; done
           paths=()
           for path in apps/cli/.next apps/cli/dist packages/bash/.next packages/bash/dist packages/pipeline/.next packages/pipeline/dist; do
             if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
@@ -106,7 +108,7 @@ jobs:
           if [ ${#paths[@]} -eq 0 ]; then
             head -c 10240 /dev/zero > catladder-artifacts-ws-base-app-prod.tar
           else
-            tar -cf catladder-artifacts-ws-base-app-prod.tar -- "${paths[@]}"
+            tar -cf catladder-artifacts-ws-base-app-prod.tar -X "$excludes" -- "${paths[@]}"
           fi
         shell: bash
       - name: Upload artifacts
