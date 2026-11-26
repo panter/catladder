@@ -89,8 +89,18 @@ Everything app-level lives under `values`:
   `deleteDatabaseOnStop` controls whether the database is dropped when
   the environment stops (default: true for review envs, false else).
 - `revisionsToKeep` — how many inactive revisions (the rollback
-  history) the post-deploy cleanup keeps; older revisions and their
-  images are deleted. Default: 5 on prod envs, 0 everywhere else.
+  history) the post-deploy cleanup keeps; older revisions are deleted.
+  Default: 5 on prod envs, 0 everywhere else.
+- `imagesToKeep` — newest images kept per env/component in Artifact
+  Registry; older images are removed after each deploy. Default:
+  `revisionsToKeep + 5` (5 outside prod, 10 on prod by default), with an
+  effective minimum of `revisionsToKeep + 1`. Must be a finite positive
+  integer. The extra images protect concurrent pipelines between push
+  and deploy; increase the count for more overlap. Review apps have
+  separate paths per MR/PR, but overlapping pipelines of the same MR/PR
+  need the same protection. The shared build cache keeps 3 images
+  independently. Environment stop and legacy review image cleanup
+  still remove all deployment images in their respective paths.
 - `execute` — run a script/job/HTTP call at a deploy lifecycle point
   (`preDeploy`/`postDeploy`/`preStop`/`postStop`) or on a `schedule`.
   Prefer this over the deprecated `when`/`schedule` fields on `jobs`.
