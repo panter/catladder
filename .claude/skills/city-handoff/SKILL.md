@@ -30,15 +30,15 @@ beads and starts the right workflow – you never start workflows yourself.
    **Assign a parent epic** to every new bead with `--parent <epic-id>`, in addition to any `discovered-from`
    link. Decomposition children stay under their source bead. If no existing epic fits, propose a new epic
    to the human and create it only after they agree; then create the work beads under it.
-6. **Approval.** Every work bead needs `approved` from a human, including
-   human-created and `upstream` beads. The only exemption is a declared standing order whose provenance metadata,
-   label and title all match. Approve when the bead is ready to build; open blockers are fine – the dispatcher
-   waits until same-rig blockers are closed. A blocker in another rig cannot be a dependency; see the rule below.
-   Fresh agent-created beads carrying `approved` lose it and get `needs-triage` +
-   `triage-checked`; human reapproval clears `needs-triage`. Agents never approve their own follow-ups. The
-   guard accepts an approval only when the `approved` label event's actor is a registered person (people.toml):
-   the dashboard, `city-bd approve` on the person's explicit words (below), or a person running
-   `bd --actor "<name>" label add <id> approved`.
+6. **Approval (ADR 0017 A).** File only work the person asked for through the authenticated
+   city-beads API. Creation by a registered person (`remote-agent/<email>` or their registered name)
+   counts as person-ordered approval unless marked `idee` or `needs-refinement`. Agent ideas must
+   carry `idee`; never present your own follow-ups as the person's order. Refined work requires
+   fresh explicit human approval. Other agent-created work still needs human approval, except a
+   declared standing order with matching provenance. Never write `approved` as an agent.
+   Set blocking dependencies before work becomes eligible. For several dependent beads, create
+   them with `idee`, wire dependencies, then remove `idee` only for the work the person requested.
+   Cross-rig blockers must be verified closed before removing the hold.
 7. **Never sling.** Do not run `gc sling`, do not start formulas, do not claim beads. The dispatcher applies budgets,
    overload rules, attempt limits and the right formula. (Exception: the human explicitly asks for a manual start.)
 8. **Follow up** in the city dashboard (https://colab-city.angora-dojo.ts.net, page «Needs you» for beads waiting for a human) or
@@ -110,8 +110,7 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   precedence over `big`; label `big` runs `build-basic`, otherwise `implement`. Findings go to
   `docs/spikes/<id>-<slug>.md` as a docs-only PR (or a short bead answer). PRs go to the rig's own repo and
   maw merges, with no merge train. Follow-ups need human approval; unresolved questions end in a `human`
-  bead. Every work bead needs `approved` from a human, regardless of creator or `upstream` label; only a declared
-  standing order with matching provenance metadata, label and title is exempt.
+  bead. Person-ordered work follows rule 6; agent ideas carry `idee`, and refined work needs fresh human approval.
   **Requests to the city-city** (a feature for catladder or the dashboard, a fix in a city's config, an order or
   formula change) go through `city-beads` (MCP tools or the bundled CLI):
   `node .claude/skills/city-beads/scripts/city-bd.mjs --rig maw-city/<rig> create "<title>" …`.
@@ -132,5 +131,5 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
 - [ ] Each new bead has a parent epic (`--parent`), plus any `discovered-from` link; decomposition children stay
       under their source bead. If no epic fits, a new epic was proposed and created only after human agreement.
 - [ ] Open questions → spikes; dependencies as `--blocked-by`.
-- [ ] Approved on the person's explicit words via `approve`, or the person directed to the dashboard.
+- [ ] Only requested work is person-ordered; own ideas carry `idee`; refined work has fresh human approval.
 - [ ] Nothing slung, nothing written into `plans/`, no code changed.

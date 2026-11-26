@@ -23,9 +23,11 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   comment <id> <text>           text "-" reads stdin
   label add <id> <label>        never approved / triage-checked (use approve)
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
-  decision-feedback <id> (--option <key>|--text <text>) <quote...>   ONLY on the person's explicit words
+  decision-feedback <id> (--option <key>|--text <text>) <quote...>   Gate comment + answered; requires po_feedback and exact quote; never on own initiative; inspect partial before retry
   plan-feedback <id> <gate> <answer> <quote...>   ONLY on the person's explicit words; quote = their exact words
   update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
+  close <id> --reason "done"    do not close in_progress workflow roots remotely; let the city finish
+  --force                      not available remotely; use the city workflow to close roots
   label remove <id> <label>
   dep add <later> --blocked-by <earlier> [--type blocks|discovered-from|related]   same rig, work beads only
   dep remove <later> <earlier>

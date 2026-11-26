@@ -172,16 +172,20 @@ Human replies require comment and the existing assignment/admin rule. The city
 interprets replies and must check approve/po_feedback against the same scope;
 never treat a comment permission as approval authority.
 
-## PR decision feedback
+## Decision answers on the gate bead
 
 Use `city-bd decision-feedback <gate-id> --option <key> <quote...>` or
 `city-bd decision-feedback <gate-id> --text <single-line-answer> <quote...>`
 (MCP `decision_feedback`, REST `POST …/decision-feedback`) **only on the
 signed-in person's explicit words, never on your own initiative**. Quote their
 exact words; empty/whitespace quotes are rejected. Requires `po_feedback` for
-the city/rig and their verified GitHub link matching people.toml. The server
-reads the gate and PR target afresh, posts as their GitHub user, then records
-provenance on the gate without changing labels. Inspect `posted` and `partial`
-before retrying: a retry reconciles provenance without posting the PR comment
-twice. A 409 for a missing GitHub link requires the person to Connect GitHub in
-the dashboard; use the manual PR comment fallback until then.
+the city/rig, people.toml membership and visibility. The server reads the open
+human gate afresh and validates the decision. It posts `/feedback (<key>)` or
+`/feedback <text>` as the person on the gate bead, adds only `answered`, and
+records the exact quote in a separate agent provenance comment. PR links are
+informational; answering needs no PR target.
+
+Inspect `posted`, `partial` and the bead before retrying. A successful answer
+cannot be submitted twice. A partial write may have posted the answer already;
+retry reconciles persisted comments, provenance and the label and applies only
+missing writes. An uncertain outcome requires inspection before retrying.
