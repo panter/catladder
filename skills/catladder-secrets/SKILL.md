@@ -115,8 +115,18 @@ env). Sync them with:
 yarn catladder project secrets-sync-github
 ```
 
-Run this after adding/changing secrets when a github pipeline is
-enabled.
+When a GitHub pipeline is enabled, `secrets-set`, `secrets-push` and
+`config-secrets` mirror to GitHub automatically. A separate
+`secrets-sync-github` is not needed after these commands.
+
+Run the full sync only in these cases:
+
+- Initial full sync when a GitHub pipeline is first enabled (see
+  `catladder-migrate-ci-backend` step 4).
+- After a write command warned that the github cli (gh) is not
+  authenticated or no github repository was found. Authenticate `gh`
+  or fix the repository remote first, then run the sync.
+- A deliberate full resync, for example after switching `secrets.vault`.
 
 ## Local development
 

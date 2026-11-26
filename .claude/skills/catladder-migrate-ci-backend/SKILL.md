@@ -135,8 +135,12 @@ This creates one **GitHub environment per catladder env** and writes
 each secret/variable into the environment(s) whose generated jobs
 actually reference it. (Environments are not cosmetic: GitHub caps a
 repository at 100 secrets, which a multi-env project blows through; the
-cap applies per environment.) Re-run it after every secret change for as
-long as both backends are live.
+cap applies per environment.)
+
+Later secret changes via `secrets-set`, `secrets-push` and
+`config-secrets` mirror automatically. Re-run the full sync only in the
+cases listed in `catladder-secrets` under "GitHub pipelines" (after a
+mirror warning or for a deliberate full resync).
 
 Then verify:
 

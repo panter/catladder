@@ -90,8 +90,15 @@ Which vault is configured makes no difference to the commands below.
 
 With the GitHub backend, secrets cannot be read from the vault at
 runtime — they are mirrored into GitHub _environment_ secrets (one
-GitHub environment per catladder env). After changing secrets, run
-`yarn catladder project secrets-sync-github`.
+GitHub environment per catladder env). `secrets-set`, `secrets-push` and
+`config-secrets` mirror changes automatically, so no separate sync is
+needed after these commands.
+
+Run `yarn catladder project secrets-sync-github` only for the initial
+full sync when enabling a GitHub pipeline, after a write command warned
+that the github cli (gh) is not authenticated or no github repository
+was found (authenticate `gh` or fix the remote first), or for a
+deliberate full resync, for example after switching `secrets.vault`.
 
 :::
 
