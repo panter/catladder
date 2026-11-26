@@ -101,7 +101,18 @@ describe("checkLocalAccess", () => {
 
   it("refuses the gitlab vault", async () => {
     const out = await run(config({ secrets: { vault: "gitlab" } } as any));
-    expect(out.join("\n")).toMatch(/fail:.*not a CI variable store/);
+    expect(out.join("\n")).toMatch(/fail:.*CI variable store/);
+  });
+
+  it("refuses the google-secret-manager vault", async () => {
+    const out = await run(
+      config({
+        secrets: { vault: { type: "google-secret-manager" } },
+      } as any),
+    );
+    expect(out.join("\n")).toMatch(
+      /fail:.*cannot use the configured vault: .*google-secret-manager/,
+    );
   });
 
   it("reports an invalid declaration instead of throwing", async () => {

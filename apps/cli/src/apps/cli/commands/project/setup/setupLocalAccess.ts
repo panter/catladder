@@ -2,12 +2,12 @@ import type { ComponentContext } from "@catladder/pipeline";
 import {
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
-  getVaultConfig,
   isOfDeployType,
 } from "@catladder/pipeline";
 import { getProjectConfig } from "../../../../../config/getProjectConfig";
 import type { IO } from "../../../../../core/types";
 import { syncLocalAccessServiceAccount } from "../../../../../gcloud/localAccess";
+import { getLocalAccessVaultIncompatibility } from "../../../../../vault/localAccessCompat";
 
 /**
  * provisions the local access (`localAccess` in catladder.ts)
@@ -26,11 +26,11 @@ export const setupLocalAccess = async (
   // validates `credentialsEnvVar` (catenv silently skips invalid ones)
   getLocalAccessGcpCredentialsEnvVars(projectConfig, context.name);
 
-  if (roles.length > 0 && getVaultConfig(projectConfig).type === "gitlab") {
-    // the gitlab vault stores secrets as CI variables available to every
-    // job on every branch: the key would leak to anyone who can push
+  const incompatible =
+    roles.length > 0 ? getLocalAccessVaultIncompatibility(projectConfig) : null;
+  if (incompatible) {
     throw new Error(
-      `localAccess (${context.env}:${context.name}) needs a vault that is not a CI variable store (e.g. bitwarden): the gitlab vault would expose the service account key to every CI job. Configure \`vault\` or remove the localAccess declaration.`,
+      `localAccess (${context.env}:${context.name}) cannot use the configured vault: ${incompatible}. Configure another \`vault\` (e.g. bitwarden) or remove the localAccess declaration.`,
     );
   }
 
