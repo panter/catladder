@@ -3,6 +3,8 @@ import { allowFailureInScripts } from "../../utils/gitlab";
 import { getDeleteUnusedImagesCommands } from "./artifactsRegistry";
 import { getDeleteUnusedRevisionsCommands } from "./cloudRunRevisions";
 
+export const IMAGE_SAFETY_MARGIN = 4;
+
 export const getRemoveOldRevisionsAndImagesCommand = (
   context: ComponentContext,
   when: "postDeploy" | "onStop",
@@ -24,8 +26,23 @@ export const getRemoveOldRevisionsAndImagesCommand = (
     configuredRevisionsToKeep ??
     (context.environment.envType === "prod" ? 5 : 0);
 
-  // this number needs to be higher than inactive after deploy, so we add one
-  const imagesToKeep = revisionsToKeep + 1;
+  const configuredImagesToKeep =
+    deployConfig && deployConfig.type === "google-cloudrun"
+      ? deployConfig.imagesToKeep
+      : undefined;
+  if (
+    configuredImagesToKeep !== undefined &&
+    (!Number.isInteger(configuredImagesToKeep) || configuredImagesToKeep < 1)
+  ) {
+    throw new Error("google-cloudrun imagesToKeep must be an integer >= 1");
+  }
+
+  // A concurrent pipeline may have pushed an image it has not deployed yet.
+  // Keep a margin beyond inactive revisions and the currently serving image.
+  const imagesToKeep = Math.max(
+    configuredImagesToKeep ?? revisionsToKeep + 1 + IMAGE_SAFETY_MARGIN,
+    revisionsToKeep + 1,
+  );
 
   const deleteOldRevisionsCommands = getDeleteUnusedRevisionsCommands(
     context,

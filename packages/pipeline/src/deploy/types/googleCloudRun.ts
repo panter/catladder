@@ -527,13 +527,21 @@ export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
 
   /**
    * how many inactive cloud run revisions to keep after a deploy — the
-   * rollback history. Older revisions and their images are deleted by
-   * the post-deploy cleanup (images keep one more than revisions, for
-   * the currently serving one).
+   * rollback history. Older revisions are deleted by the post-deploy
+   * cleanup; image retention is controlled separately by imagesToKeep.
    *
    * defaults to 5 for prod envs, 0 for every other environment
    */
   revisionsToKeep?: number;
+
+  /**
+   * Newest images kept per environment/component after a deploy; older ones
+   * are deleted. Protects images pushed by concurrent pipelines, including
+   * overlapping pipelines of the same review app. Must be an integer >= 1.
+   * Effective retention is at least revisionsToKeep + 1.
+   * Defaults to revisionsToKeep + 5 (5 outside prod, 10 on prod).
+   */
+  imagesToKeep?: number;
 
   /**
    * add cloudSql
